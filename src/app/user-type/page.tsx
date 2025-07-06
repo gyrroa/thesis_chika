@@ -30,10 +30,10 @@ export default function Home() {
             </div>
             <div className="flex gap-[10px] w-[311px] md:w-[330px] justify-center">
               <Button variant="custom" onClick={() => setStep('child')} className="text-[16px]">
-                I'm a CHILD
+                {"I'm a CHILD"}
               </Button>
               <Button variant="custom" href="create-account" className="text-[16px]">
-                I'm a PARENT
+                {"I'm a PARENT"}
               </Button>
             </div>
           </>

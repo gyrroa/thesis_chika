@@ -4,12 +4,26 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Chrome, Safari, Edge */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-clear-button,
+input[type="password"]::-webkit-inner-spin-button {
+  display: none !important;
+  appearance: none;
+}
+
+/* General reset */
+input[type="password"] {
+  appearance: none;
+}
+
 :root {
   font-family: 'Quicksand';
   line-height: 125%;
   letter-spacing: 0.75px;
   --radius: 0.625rem;
-  --background: #FFFDF2;
   /* --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -82,15 +96,13 @@
 }
 
 body {
-  background-image: url('/background.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
   font-family: var(--font-sans);
 }
+
 img {
   pointer-events: none;
 }
+
 /* 
 .dark {
   --background: oklch(0.145 0 0);

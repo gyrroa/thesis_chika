@@ -42,38 +42,37 @@ export const AgeSelector = ({
         Select child’s age
       </h2>
 
-      <div className="flex items-center gap-6 text-[32px] font-bold min-h-[96px]">
+      <div className="flex items-center gap-9 font-bold min-h-[60px]">
         {visibleAges.map((age, i) => {
           const isSelected = age === selected;
 
           return (
             <div
               key={i}
-              className={`w-[32px] text-center transition-all duration-200 ${isSelected
-                  ? 'text-[#FF9900] scale-110 relative'
-                  : age === null
-                    ? 'text-transparent'
-                    : 'text-[#FF9900]/30 cursor-pointer hover:scale-105'
+              className={`w-[20px] text-[36px] text-center transition-all duration-100 ${isSelected
+                ? 'text-[#FF9900] relative text-[48px] w-[81px]'
+                : age === null
+                  ? 'text-transparent'
+                  : 'text-[#FF9900]/30 cursor-pointer hover:scale-105'
                 }`}
               onClick={() => age !== null && handleSelect(age)}
             >
-              {/* Center indicator arrows */}
               {isSelected && (
                 <>
                   <Image
                     src="/register-child/select.svg"
                     alt="arrow-left"
-                    width={13}
-                    height={13}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full rotate-180"
+                    width={10}
+                    height={12}
+                    className="absolute left-[13px] top-1/2 -translate-y-1/2 -translate-x-full rotate-180"
                     priority
                   />
                   <Image
                     src="/register-child/select.svg"
                     alt="arrow-right"
-                    width={13}
-                    height={13}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full"
+                    width={10}
+                    height={12}
+                    className="absolute right-[13px] top-1/2 -translate-y-1/2 translate-x-full"
                     priority
                   />
                 </>

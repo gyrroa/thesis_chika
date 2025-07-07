@@ -20,7 +20,7 @@ export const Header: FC<HeaderProps> = ({ showBackButton = true }) => {
     };
 
     return (
-        <header className="grid grid-cols-3 items-center h-[60px] absolute top-[60px] left-1/2 transform -translate-x-1/2 select-none sm:w-[500px] w-full px-[26px] py-[12px]">
+        <header className="grid grid-cols-3 items-center h-[60px] absolute top-[60px] sm:top-[0px] left-1/2 transform -translate-x-1/2 select-none sm:w-[500px] w-full px-[26px] py-[12px]">
             {/* Back Button or Placeholder */}
             <div className="flex justify-start">
                 {showBackButton ? (

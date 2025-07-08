@@ -6,7 +6,8 @@ import { Header } from '@/components/ui/header';
 import Image from 'next/image';
 
 export default function Home() {
-    const [step, setStep] = useState<'userType' | 'child'>('userType');
+    const [step] = useState<'userType' | 'child'>('userType');
+
 
     return (
         <main className="flex items-center justify-center justify-items-center min-h-dvh font-[family-name:var(--font-sans)] bg-[url('/background.svg')] bg-cover bg-no-repeat">

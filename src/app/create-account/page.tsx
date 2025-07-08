@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation'    // ← import this
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/ui/header';
 import Image from 'next/image';
 
 export default function Home() {
+    const router = useRouter()                  // ← initialize router
     const [step] = useState<'userType' | 'child'>('userType');
     const [form, setForm] = useState({
         name: '',
@@ -22,14 +24,17 @@ export default function Home() {
         e.preventDefault();
         // TODO: Send form data to API
         console.log('Form submitted:', form);
+        router.push('/register-child');
     };
+    // TODO: Handle submit for other auth
+
     return (
-        <main className="items-center justify-items-center w-screen min-h-dvh font-[family-name:var(--font-sans)] bg-[#F2E7DC] bg-[url('/background.svg')] bg-cover bg-no-repeat">
+        <main className="items-center justify-items-center w-screen max-h-dvh font-[family-name:var(--font-sans)] bg-[#F2E7DC] bg-[url('/background.svg')] bg-cover bg-no-repeat">
             <Header />
-            <div className="w-screen h-dvh flex flex-col items-center text-center justify-center select-none pt-[120px] sm:pt-0">
+            <div className="w-screen h-dvh flex flex-col items-center text-center justify-center select-none pt-[60px] sm:pt-0">
                 {step === 'userType' && (
                     <div className='flex sm:w-[500px] sm:max-h-[700px] grow bg-[#FFFDF2] sm:rounded-[45px] rounded-t-[45px] text-[#C45500] [box-shadow:0px_-1px_24.1px_0px_rgba(196,85,0,0.30)] w-full'>
-                        <form onSubmit={handleSubmit} className="flex flex-col text-[16px] max-w-[311px] mx-auto justify-between sm:py-[50px] pt-[50px] pb-[130px]">
+                        <form onSubmit={handleSubmit} className="flex flex-col text-[16px] max-w-[311px] mx-auto justify-between sm:py-[50px] pt-[50px] pb-[50px]">
                             <h2 className="text-2xl font-bold">{"Create Account"}</h2>
 
                             <div className='flex flex-col gap-[20px]'>
@@ -59,7 +64,7 @@ export default function Home() {
                                 <div className="relative w-full">
                                     <div className="absolute top-1/2 left-1 transform -translate-y-1/2 w-9 h-9 rounded-[25px] bg-[linear-gradient(180deg,_#F90_0%,_#C45500_100%)] flex items-center">
                                         <Image
-                                            src="/create-account/email_address.svg"
+                                            src="/create-account/email-address.svg"
                                             alt="user-type"
                                             width={15}
                                             height={12}
@@ -103,13 +108,13 @@ export default function Home() {
 
                             </div>
                             <Button variant="default" type='submit'>
-                                SIGN UP
+                                {"SIGN UP"}
                             </Button>
 
                             <div className='flex flex-col gap-[17px]'>
-                                <h1>Or continue with</h1>
+                                <h1>{"Or continue with"}</h1>
                                 <div className='flex gap-[19px] items-center justify-center'>
-                                    <div className="w-14 h-14 rounded-full border border-[#C45500] items-center flex p-[15px] cursor-pointer active:brightness-90 hover:scale-110 duration-100">
+                                    <div className="w-14 h-14 rounded-full border border-[#C45500] items-center flex p-[15px] cursor-pointer active:brightness-90 hover:scale-105 active:scale-100 duration-100 shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)]">
                                         <Image
                                             src="/create-account/google.svg"
                                             alt="user-type"
@@ -119,7 +124,7 @@ export default function Home() {
                                             priority
                                         />
                                     </div>
-                                    <div className="w-14 h-14 rounded-full border border-[#C45500] items-center flex p-[15px] cursor-pointer active:brightness-90 hover:scale-110 duration-100">
+                                    <div className="w-14 h-14 rounded-full border border-[#C45500] items-center flex p-[15px] cursor-pointer active:brightness-90 hover:scale-105 active:scale-100 duration-100 shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)]">
                                         <Image
                                             src="/create-account/facebook.svg"
                                             alt="user-type"
@@ -128,7 +133,7 @@ export default function Home() {
                                             className="m-auto"
                                             priority
                                         /></div>
-                                    <div className="w-14 h-14 rounded-full border border-[#C45500] items-center flex p-[15px] cursor-pointer active:brightness-90 hover:scale-110 duration-100">
+                                    <div className="w-14 h-14 rounded-full border border-[#C45500] items-center flex p-[15px] cursor-pointer active:brightness-90 hover:scale-105 active:scale-100 duration-100 shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)]">
                                         <Image
                                             src="/create-account/apple.svg"
                                             alt="user-type"
@@ -140,7 +145,7 @@ export default function Home() {
                                 </div>
                             </div>
 
-                            <h1>{"Already have an account? "}<span className='font-bold text-[#FF9900] hover:brightness-110 active:brightness-90 duration-100 underline cursor-pointer'>{"Log in"}</span></h1>
+                            <h1>{"Already have an account? "}<span className='font-bold text-[#FF9900] hover:brightness-110 active:brightness-95 duration-100 underline cursor-pointer'>{"Log in"}</span></h1>
                         </form>
                     </div>
                 )}

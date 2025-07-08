@@ -20,7 +20,7 @@ export default function Home() {
               alt="user-type"
               width={315}
               height={315}
-              className="w-[315px] h-auto drop-shadow-[0px_8px_16px_rgba(196,85,0,0.35)]"
+              className="w-[315px] h-auto drop-shadow-[0px_8px_16px_rgba(196,85,0,0.35)] mb-[20px]"
               priority
             />
             <div className="flex flex-col">

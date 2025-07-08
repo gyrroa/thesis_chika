@@ -27,9 +27,9 @@ export default function Home() {
         // TODO: Send form data to API
     };
     return (
-        <main className="items-center justify-items-center w-screen min-h-screen font-[family-name:var(--font-sans)] bg-[#F2E7DC] bg-[url('/background.svg')] bg-cover bg-no-repeat">
+        <main className="items-center justify-items-center w-dvw min-h-dvh font-[family-name:var(--font-sans)] bg-[#F2E7DC] bg-[url('/background.svg')] bg-cover bg-no-repeat">
             <Header />
-            <div className="w-screen h-screen flex flex-col items-center text-center justify-center select-none pt-[120px] sm:pt-0">
+            <div className="w-dvw h-dvh flex flex-col items-center text-center justify-center select-none pt-[120px] sm:pt-0">
                 <div className='flex sm:w-[500px] sm:max-h-[700px] grow bg-[#FFFDF2] sm:rounded-[45px] rounded-t-[45px] text-[#C45500] [box-shadow:0px_-1px_24.1px_0px_rgba(196,85,0,0.30)] w-full'>
                     <form onSubmit={handleSubmit} className="flex flex-col text-[16px] max-w-[311px] mx-auto gap-[47px] sm:py-[50px] pt-[50px] pb-[200px]">
                         <div className='flex flex-col gap-[25px]'>

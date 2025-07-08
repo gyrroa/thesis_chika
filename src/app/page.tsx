@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function Home() {
   return (
-    <main className="items-center justify-items-center min-h-screen font-[family-name:var(--font-sans)] bg-[url('/background.svg')] bg-cover bg-no-repeat">
+    <main className="items-center justify-items-center min-h-dvh font-[family-name:var(--font-sans)] bg-[url('/background.svg')] bg-cover bg-no-repeat">
       <div className="flex flex-col items-center text-center justify-center gap-[20px] sm:gap-[41px] select-none pt-[120px]">
         <>
           <Image

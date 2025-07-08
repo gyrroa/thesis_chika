@@ -1,61 +1,36 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/ui/header';
 import Image from 'next/image';
 
 export default function Home() {
-    const [step, setStep] = useState<'step-1' | 'step-2'>('step-1');
-
     return (
         <main className="flex items-center justify-center justify-items-center min-h-dvh font-[family-name:var(--font-sans)] bg-[url('/background.svg')] bg-cover bg-no-repeat">
 
             <div className="flex flex-col items-center text-center justify-center gap-[20px] sm:gap-[41px] select-none">
-                {step === 'step-1' && (
-                    <>
-                        <Header />
-                        <Image
-                            src="/onboarding/welcome.svg"
-                            alt="user-type"
-                            width={315}
-                            height={315}
-                            className="w-[315px] h-auto"
-                            priority
-                        />
-                        <div className="flex flex-col gap-[5px] px-[32px]">
-                            <h1 className="font-bold text-[24px] sm:text-4xl text-[#C45500] [text-shadow:0_0_4px_rgba(255,153,0,0.35)] leading-tight">
-                                {"Welcome to CHIKA!"}
-                            </h1>
-                            <p className='text-[14vm] text-[#F90]'>
-                                {"Empower your child's speech development with our AI-powered articulation exercises — fun, effective, and designed just for them!"}
-                            </p>
-                        </div>
-                        <div className="flex justify-center">
-                            <Button variant="custom" className="text-[16px]" onClick={() => setStep('step-2')}>
-                                {"NEXT"}
-                            </Button>
-                        </div>
-                    </>
-                )}
-                {step === 'step-2' && (
-                    <>
-                        <Header showBackButton={false} />
-                        <Image
-                            src="/create-account/if-child.svg"
-                            alt="user-type"
-                            width={315}
-                            height={315}
-                            className="w-[315px] h-auto drop-shadow-[0px_8px_16px_rgba(196,85,0,0.35)]"
-                        />
-                        <div className="flex flex-col">
-                            <h1 className="font-extrabold text-[24px] sm:text-4xl text-[#F90] [text-shadow:0_0_4px_rgba(255,153,0,0.35)] leading-tight">{"Ask a "}<span className="text-[#C45500]">{"parent"}</span>{" to set up"}<br />{" the app"}</h1>
-                        </div>
-                        <div className="flex gap-[10px] w-[84px] justify-center">
-                            <Button variant="custom" className="text-[16px]" href="/">{"OKAY"}</Button>
-                        </div>
-                    </>
-                )}
+                <Header />
+                <Image
+                    src="/onboarding/welcome.svg"
+                    alt="user-type"
+                    width={315}
+                    height={315}
+                    className="w-[315px] h-auto"
+                    priority
+                />
+                <div className="flex flex-col gap-[5px] px-[32px]">
+                    <h1 className="font-bold text-[24px] sm:text-4xl text-[#C45500] [text-shadow:0_0_4px_rgba(255,153,0,0.35)] leading-tight">
+                        {"Welcome to CHIKA!"}
+                    </h1>
+                    <p className='text-[14vm] text-[#F90]'>
+                        {"Empower your child's speech development with our AI-powered articulation exercises — fun, effective, and designed just for them!"}
+                    </p>
+                </div>
+                <div className="flex justify-center">
+                    <Button variant="custom" className="text-[16px]">
+                        {"NEXT"}
+                    </Button>
+                </div>
             </div>
         </main>
     );

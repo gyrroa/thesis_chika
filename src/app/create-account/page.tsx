@@ -7,7 +7,7 @@ import { Header } from '@/components/ui/header';
 import Image from 'next/image';
 
 export default function Home() {
-    const router = useRouter()                  // ← initialize router
+    const router = useRouter() 
     const [step] = useState<'userType' | 'child'>('userType');
     const [form, setForm] = useState({
         name: '',

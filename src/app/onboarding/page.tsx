@@ -6,14 +6,13 @@ import { Header } from '@/components/ui/header';
 import Image from 'next/image';
 
 export default function Home() {
-    const [step] = useState<'userType' | 'child'>('userType');
-
+    const [step, setStep] = useState<'step-1' | 'step-2'>('step-1');
 
     return (
         <main className="flex items-center justify-center justify-items-center min-h-dvh font-[family-name:var(--font-sans)] bg-[url('/background.svg')] bg-cover bg-no-repeat">
 
             <div className="flex flex-col items-center text-center justify-center gap-[20px] sm:gap-[41px] select-none">
-                {step === 'userType' && (
+                {step === 'step-1' && (
                     <>
                         <Header />
                         <Image
@@ -33,13 +32,13 @@ export default function Home() {
                             </p>
                         </div>
                         <div className="flex justify-center">
-                            <Button variant="custom" className="text-[16px]">
+                            <Button variant="custom" className="text-[16px]" onClick={() => setStep('step-2')}>
                                 {"NEXT"}
                             </Button>
                         </div>
                     </>
                 )}
-                {step === 'child' && (
+                {step === 'step-2' && (
                     <>
                         <Header showBackButton={false} />
                         <Image

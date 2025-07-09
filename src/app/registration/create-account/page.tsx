@@ -7,7 +7,7 @@ import { Header } from '@/components/ui/header';
 import Image from 'next/image';
 
 export default function Home() {
-    const router = useRouter() 
+    const router = useRouter()
     const [step] = useState<'userType' | 'child'>('userType');
     const [form, setForm] = useState({
         name: '',
@@ -24,7 +24,7 @@ export default function Home() {
         e.preventDefault();
         // TODO: Send form data to API
         console.log('Form submitted:', form);
-        router.push('/register-child');
+        router.push('register-child');
     };
     // TODO: Handle submit for other auth
 

@@ -2,9 +2,13 @@
 
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/ui/header';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-
+    const router = useRouter();
+    const handleSubmit = (e: React.FormEvent) => {
+        router.push('test');
+    }
     return (
         <main className="flex items-center justify-center justify-items-center min-h-dvh  bg-[url('/background.svg')] bg-cover bg-no-repeat">
 
@@ -29,7 +33,7 @@ export default function Home() {
 
                 <p className='text-[16px] font-medium text-[#F90]'>{"Before we begin, watch this short video showing "}<span className='font-bold'>{"how to check your child’s hearing"}</span>{" with the Ling6 sounds."}</p>
                 <div className="flex gap-[10px] justify-center">
-                    <Button className="text-[16px]">
+                    <Button className="text-[16px]" onClick={handleSubmit}>
                         {"START TEST"}
                     </Button>
                 </div>

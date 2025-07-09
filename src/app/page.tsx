@@ -24,7 +24,7 @@ export default function Home() {
             </p>
           </div>
           <div className="flex flex-col gap-[20px] w-[311px] sm:w-[330px]">
-            <Button variant="default" href="/user-type">
+            <Button variant="default" href="/registration/user-type">
               {"CREATE AN ACCOUNT"}
             </Button>
             <Button variant="custom">{"LOG IN"}</Button>

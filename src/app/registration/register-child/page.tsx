@@ -39,8 +39,9 @@ export default function Home() {
         console.log('Gender:', isGirl ? 'Girl' : 'Boy')
         console.log('Agreed to Terms:', agreedToTerms)
         // …send to your API…
-        router.push('/onboarding');
+        router.push('onboarding');
     }
+
     return (
         <main className="items-center justify-items-center w-dvw max-h-dvh bg-[#F2E7DC] bg-[url('/background.svg')] bg-cover bg-no-repeat">
             <Header />
@@ -92,7 +93,7 @@ export default function Home() {
                                     <input
                                         type="checkbox"
                                         className="peer appearance-none w-4 h-4 rounded-[7.2px] border border-[#F90] bg-white ring-0 ring-[#F90] cursor-pointer"
-                                        checked={agreedToTerms}                    
+                                        checked={agreedToTerms}
                                         onChange={e => setAgreedToTerms(e.target.checked)}
                                     />
                                     <svg

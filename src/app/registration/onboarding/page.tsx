@@ -19,7 +19,7 @@ export default function Home() {
             if (page < 3) {
                 setPage(page + 1)
             } else {
-                router.push('/ling6-sound-how')
+                router.push('/ling6-sound/how')
             }
             setFade(true)
         }, 200)

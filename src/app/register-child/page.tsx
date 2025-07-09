@@ -42,7 +42,7 @@ export default function Home() {
         router.push('/onboarding');
     }
     return (
-        <main className="items-center justify-items-center w-dvw max-h-dvh font-[family-name:var(--font-sans)] bg-[#F2E7DC] bg-[url('/background.svg')] bg-cover bg-no-repeat">
+        <main className="items-center justify-items-center w-dvw max-h-dvh bg-[#F2E7DC] bg-[url('/background.svg')] bg-cover bg-no-repeat">
             <Header />
             <div className="w-dvw h-dvh flex flex-col items-center text-center justify-center select-none pt-[60px] sm:pt-0">
                 <div className='flex sm:w-[500px] sm:max-h-fit grow bg-[#FFFDF2] sm:rounded-[45px] rounded-t-[45px] text-[#C45500] [box-shadow:0px_-1px_24.1px_0px_rgba(196,85,0,0.30)] w-full'>
@@ -92,7 +92,7 @@ export default function Home() {
                                     <input
                                         type="checkbox"
                                         className="peer appearance-none w-4 h-4 rounded-[7.2px] border border-[#F90] bg-white ring-0 ring-[#F90] cursor-pointer"
-                                        checked={agreedToTerms}                     // ← controlled
+                                        checked={agreedToTerms}                    
                                         onChange={e => setAgreedToTerms(e.target.checked)}
                                     />
                                     <svg
@@ -106,17 +106,16 @@ export default function Home() {
                                     </svg>
                                 </label>
                                 <span className="text-[12px]">
-                                    I agree to the{' '}
-                                    <span className="text-[#F90] underline font-bold">Terms and Conditions.</span>
+                                    {"I agree to the "}
+                                    <span className="text-[#F90] underline font-bold">{"Terms and Conditions."}</span>
                                 </span>
                             </label>
                             <Button variant="default" type="submit">
-                                REGISTER CHILD
+                                {"REGISTER CHILD"}
                             </Button>
-                            {/* ← new: error message */}
                             {showTermsError && (
-                                <p className="text-[#F90] text-sm">
-                                    You must agree to the terms and conditions before submitting.
+                                <p className="text-[#C45500] text-[10px] whitespace-nowrap">
+                                    {"Please agree to the"}<span className='font-bold'>{" Terms and Conditions "}</span>{"to continue."}
                                 </p>
                             )}
                         </div>

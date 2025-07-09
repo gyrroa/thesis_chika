@@ -2,13 +2,14 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import type { FC } from 'react';
+import type { FC, MouseEventHandler } from 'react';
 
 type HeaderProps = {
     showBackButton?: boolean;
+    onBackClick?: MouseEventHandler<HTMLButtonElement>;
 };
 
-export const Header: FC<HeaderProps> = ({ showBackButton = true }) => {
+export const Header: FC<HeaderProps> = ({ showBackButton = true, onBackClick, }) => {
     const router = useRouter();
 
     const handleGoBack = () => {
@@ -19,13 +20,15 @@ export const Header: FC<HeaderProps> = ({ showBackButton = true }) => {
         }
     };
 
+    const clickHandler = onBackClick ?? handleGoBack;
+
     return (
         <header className="grid grid-cols-3 items-center h-[60px] absolute top-0 left-1/2 transform -translate-x-1/2 select-none sm:w-[500px] w-full px-[26px] py-[12px]">
             {/* Back Button or Placeholder */}
             <div className="flex justify-start">
                 {showBackButton ? (
                     <button
-                        onClick={handleGoBack}
+                        onClick={clickHandler}
                         className="cursor-pointer hover:brightness-110 duration-100"
                         aria-label="Go back"
                     >

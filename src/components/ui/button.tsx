@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge"; // Add tailwind-merge for better mergi
 import Link from "next/link"; // Import Next.js Link for routing
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-[50px] text-xl font-bold transition-all focus:outline-none disabled:opacity-50 disabled:pointer-events-none h-[60px] w-full py-[15px] px-[20px] text-nowrap",
+  "inline-flex items-center justify-center rounded-[50px] text-xl font-bold transition-all focus:outline-none disabled:opacity-50 disabled:pointer-events-none h-[55px] w-full py-[15px] px-[20px] text-nowrap",
   {
     variants: {
       variant: {

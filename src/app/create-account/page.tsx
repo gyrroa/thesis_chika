@@ -29,7 +29,7 @@ export default function Home() {
     // TODO: Handle submit for other auth
 
     return (
-        <main className="items-center justify-items-center w-screen max-h-dvh font-[family-name:var(--font-sans)] bg-[#F2E7DC] bg-[url('/background.svg')] bg-cover bg-no-repeat">
+        <main className="items-center justify-items-center w-screen max-h-dvh bg-[#F2E7DC] bg-[url('/background.svg')] bg-cover bg-no-repeat">
             <Header />
             <div className="w-screen h-dvh flex flex-col items-center text-center justify-center select-none pt-[60px] sm:pt-0">
                 {step === 'userType' && (

@@ -111,42 +111,6 @@ export default function Home() {
                             <Button variant="default" type='submit'>
                                 {"SIGN UP"}
                             </Button>
-
-                            <div className='flex flex-col gap-[17px]'>
-                                <h1>{"Or continue with"}</h1>
-                                <div className='flex gap-[19px] items-center justify-center'>
-                                    <div className="w-14 h-14 rounded-full border border-[#C45500] items-center flex p-[15px] cursor-pointer active:brightness-90 hover:scale-105 active:scale-100 duration-100 shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)]">
-                                        <Image
-                                            src="/create-account/google.svg"
-                                            alt="user-type"
-                                            width={24}
-                                            height={24}
-                                            className="m-auto"
-                                            priority
-                                        />
-                                    </div>
-                                    <div className="w-14 h-14 rounded-full border border-[#C45500] items-center flex p-[15px] cursor-pointer active:brightness-90 hover:scale-105 active:scale-100 duration-100 shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)]">
-                                        <Image
-                                            src="/create-account/facebook.svg"
-                                            alt="user-type"
-                                            width={26}
-                                            height={26}
-                                            className="m-auto"
-                                            priority
-                                        /></div>
-                                    <div className="w-14 h-14 rounded-full border border-[#C45500] items-center flex p-[15px] cursor-pointer active:brightness-90 hover:scale-105 active:scale-100 duration-100 shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)]">
-                                        <Image
-                                            src="/create-account/apple.svg"
-                                            alt="user-type"
-                                            width={25}
-                                            height={25}
-                                            className="m-auto"
-                                            priority
-                                        /></div>
-                                </div>
-                            </div>
-
-                            <h1>{"Already have an account? "}<span className='font-bold text-[#FF9900] hover:brightness-110 active:brightness-95 duration-100 underline cursor-pointer'>{"Log in"}</span></h1>
                         </form>
                     </div>
                 )}

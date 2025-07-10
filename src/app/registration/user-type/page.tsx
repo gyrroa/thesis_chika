@@ -33,7 +33,7 @@ export default function Home() {
               <Button variant="custom" onClick={() => setStep('child')} className="text-[16px]">
                 {"I'm a CHILD"}
               </Button>
-              <Button variant="custom" href="create-account" className="text-[16px]">
+              <Button variant="custom" href="onboarding" className="text-[16px]">
                 {"I'm a PARENT"}
               </Button>
             </div>

@@ -6,20 +6,18 @@ import Image from 'next/image';
 interface SoundCardProps {
   label: string;
   src: string;
-  onClick: () => void;
 }
 
 const CARD_CLASSES =
   'flex flex-col h-auto w-auto rounded-[10px] border-1 border-[#C45500] ' +
   'bg-[#F2E7DC] p-[20px] gap-[10px] ' +
-  'transition-all duration-200 ease-out cursor-pointer';
+  'transition-all duration-200 ease-out';
 
-export const SoundCard: React.FC<SoundCardProps> = ({ label, src, onClick }) => {
+export const SoundCard: React.FC<SoundCardProps> = ({ label, src }) => {
   return (
     <button
       type="button"
       className={CARD_CLASSES}
-      onClick={onClick}
       aria-label={`Play sound ${label}`}
     >
       <Image

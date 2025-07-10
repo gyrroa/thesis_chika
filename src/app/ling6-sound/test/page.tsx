@@ -10,23 +10,21 @@ export default function Home() {
   const router = useRouter();
 
   const sounds = [
-    { id: 'ah',   label: 'ah',   src: '/ling6-sound-test/ah.svg'   },
-    { id: 'oo',   label: 'oo',   src: '/ling6-sound-test/oo.svg'   },
-    { id: 'eeee', label: 'eeee', src: '/ling6-sound-test/eeee.svg' },
-    { id: 'sh',   label: 'sh',   src: '/ling6-sound-test/sh.svg'   },
-    { id: 'ssss', label: 'ssss', src: '/ling6-sound-test/ssss.svg' },
-    { id: 'mmm',  label: 'mmm',  src: '/ling6-sound-test/mmm.svg'  },
+    { id: 'ah', label: 'ah', src: '/ling6-sound/ah.svg' },
+    { id: 'oo', label: 'oo', src: '/ling6-sound/oo.svg' },
+    { id: 'eeee', label: 'eeee', src: '/ling6-sound/eeee.svg' },
+    { id: 'sh', label: 'sh', src: '/ling6-sound/sh.svg' },
+    { id: 'ssss', label: 'ssss', src: '/ling6-sound/ssss.svg' },
+    { id: 'mmm', label: 'mmm', src: '/ling6-sound/mmm.svg' },
   ];
 
-  const handleSoundClick = (id: string) => {
-    console.log('clicked sound', id);
-    // TODO: play audio or record selection
+  const handleFail = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push('failed');
   };
-
-  const handleFail = () => router.back();
   const handlePass = (e: React.FormEvent) => {
     e.preventDefault();
-    // router.push('/ling6-sound-test');
+    router.push('/registration/create-account');
   };
 
   return (
@@ -36,10 +34,10 @@ export default function Home() {
 
         <div className="flex flex-col gap-[5px] text-[#C45500]">
           <h1 className="font-bold text-[32px] [text-shadow:0_0_4px_rgba(255,153,0,0.35)]">
-            Ling6 Sound Test
+            {"Ling6 Sound Test"}
           </h1>
           <h2 className="font-normal text-[24px] [text-shadow:0_0_4px_rgba(255,153,0,0.35)]">
-            Your Turn
+            {"Your Turn"}
           </h2>
         </div>
 
@@ -49,22 +47,20 @@ export default function Home() {
               key={id}
               label={label}
               src={src}
-              onClick={() => handleSoundClick(id)}
             />
           ))}
         </div>
 
         <p className="font-normal text-[14px] text-[#C45500] px-[10px]">
-          Say the sounds in any order you like. Tap below if your child hears
-          and/or repeats all sounds.
+          {"Say the sounds in any order you like. Tap below if your child hears and/or repeats all sounds."}
         </p>
 
         <div className="flex gap-[10px] justify-center">
           <Button className="text-[16px]" variant="custom" onClick={handleFail}>
-            FAILED
+            {"FAILED"}
           </Button>
           <Button className="text-[16px]" onClick={handlePass}>
-            PASSED
+            {"PASSED"}
           </Button>
         </div>
       </div>

@@ -18,6 +18,7 @@ export default function RegisterChild() {
     const { form, setForm, reset } = useRegistration();
     const { mutateAsync, isPending } = useRegister();
     const [dots, setDots] = useState('');
+    const [loading, setLoading] = useState(false)
 
     async function handleSubmit(e: FormEvent) {
         e.preventDefault();
@@ -25,6 +26,7 @@ export default function RegisterChild() {
     }
 
     async function registerChild() {
+        setLoading(true);
         try {
             await mutateAsync(form);
             reset();
@@ -42,7 +44,7 @@ export default function RegisterChild() {
             else {
                 console.error('Unexpected error:', err);
             }
-            setTimeout(() => router.push('/articulation/how'), 3000)
+            setTimeout(() => router.push('/articulation/how'), 2000)
         }
     }
 
@@ -59,7 +61,7 @@ export default function RegisterChild() {
     }, []);
 
     return (
-        <main className={`items-center justify-items-center w-dvw max-h-dvh ${!isPending ? 'bg-[#F2E7DC]' : ''} bg-[url('/background.svg')] bg-cover bg-no-repeat`}>
+        <main className={`}items-center justify-items-center w-dvw max-h-dvh ${!loading ? 'bg-[#F2E7DC]' : ''} bg-[url('/background.svg')] bg-cover bg-no-repeat`}>
             <Header showBackButton={false} />
             {showTerms && (
                 <TermsAndConditions
@@ -71,7 +73,7 @@ export default function RegisterChild() {
                 />
             )}
             <div className="w-dvw h-dvh flex flex-col items-center text-center justify-center select-none pt-[60px] sm:pt-0">
-                {!isPending ? (
+                {!loading ? (
                     <div className='flex sm:w-fit px-[32px] sm:max-h-fit grow bg-[#FFFDF2] sm:rounded-[45px] rounded-t-[45px] text-[#C45500] [box-shadow:0px_-1px_24.1px_0px_rgba(196,85,0,0.30)] w-full'>
                         <form onSubmit={handleSubmit} className="flex flex-col text-[16px] max-w-[311px] mx-auto gap-[30px] sm:py-[50px] pt-[50px] pb-[50px]">
                             <div className='flex flex-col gap-[25px]'>

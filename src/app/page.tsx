@@ -27,7 +27,7 @@ export default function Home() {
             <Button variant="default" href="user-type">
               {"CREATE AN ACCOUNT"}
             </Button>
-            <Button variant="custom">{"LOG IN"}</Button>
+            <Button variant="custom" href="login">{"LOG IN"}</Button>
           </div>
         </>
       </div>

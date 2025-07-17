@@ -9,11 +9,20 @@ export default function Home() {
     const router = useRouter();
     const [isPulsing, setIsPulsing] = useState<boolean>(false)
 
+    const handleRoute = async (href = '/') => {
+        try {
+            await router.prefetch(href)
+        } catch (err) {
+            console.warn('Prefetch failed, navigating anyway:', err)
+        }
+        router.push(href)
+    }
+
     const handleMic = () => {
         console.log("mic test")
         setIsPulsing(p => !p)
         setTimeout(() => {
-            router.push("/home");
+            handleRoute("/home");
         }, 2000);
     }
 

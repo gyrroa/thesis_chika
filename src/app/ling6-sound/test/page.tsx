@@ -17,14 +17,21 @@ export default function Home() {
     { id: 'ssss', label: 'ssss', src: '/ling6-sound/ssss.svg' },
     { id: 'mmm', label: 'mmm', src: '/ling6-sound/mmm.svg' },
   ];
-
+  const handleRoute = async (href = '/') => {
+    try {
+      await router.prefetch(href)
+    } catch (err) {
+      console.warn('Prefetch failed, navigating anyway:', err)
+    }
+    router.push(href)
+  }
   const handleFail = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push('failed');
+    handleRoute('failed');
   };
   const handlePass = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push('/registration/create-account');
+    handleRoute('/registration/create-account');
   };
 
   return (

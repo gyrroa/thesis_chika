@@ -4,10 +4,19 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/ui/header';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [step, setStep] = useState<'userType' | 'child'>('userType');
-
+  const router = useRouter();
+  const handleRoute = async (href = '/') => {
+    try {
+      await router.prefetch(href)
+    } catch (err) {
+      console.warn('Prefetch failed, navigating anyway:', err)
+    }
+    router.push(href)
+  }
   return (
     <main className="flex items-center justify-center justify-items-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat">
 
@@ -33,7 +42,7 @@ export default function Home() {
               <Button variant="custom" onClick={() => setStep('child')} className="text-[16px]">
                 {"I'm a CHILD"}
               </Button>
-              <Button variant="custom" href="onboarding" className="text-[16px]">
+              <Button variant="custom"  onClick={() => handleRoute("/onboarding")} className="text-[16px]">
                 {"I'm a PARENT"}
               </Button>
             </div>
@@ -53,7 +62,7 @@ export default function Home() {
               <h1 className="font-extrabold text-[24px] sm:text-4xl text-[#F90] [text-shadow:0_0_4px_rgba(255,153,0,0.35)] leading-tight">{"Ask a "}<span className="text-[#C45500]">{"parent"}</span>{" to set up"}<br />{" the app"}</h1>
             </div>
             <div className="flex gap-[10px] w-[84px] justify-center">
-              <Button variant="custom" className="text-[16px]" href="/">{"OKAY"}</Button>
+              <Button variant="custom" className="text-[16px]" onClick={() => handleRoute("/")}>{"OKAY"}</Button>
             </div>
           </>
         )}

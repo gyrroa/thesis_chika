@@ -9,6 +9,14 @@ import { useRouter } from 'next/navigation';
 
 export default function Home() {
     const router = useRouter();
+    const handleRoute = async (href = '/') => {
+        try {
+            await router.prefetch(href)
+        } catch (err) {
+            console.warn('Prefetch failed, navigating anyway:', err)
+        }
+        router.push(href)
+    }
     return (
         <main className="flex flex-col items-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat gap-[8px] px-[33px] pt-[60px] sm:pt-[0px] sm:justify-center">
             <Header showBackButton={false} />
@@ -33,14 +41,14 @@ export default function Home() {
                         alt="D sound icon"
                         title="The /d/ sound"
                         progress="Progress: 80%"
-                        onPractice={(() => router.push("/articulation/test"))}
+                        onPractice={(() => handleRoute("/articulation/test"))}
                     />
                     <SoundCardPractice
                         src="/TEMP.svg"
                         alt="D sound icon"
                         title="The /k/ sound"
                         progress="Progress: 50%"
-                        onPractice={(() => router.push("/articulation/test"))}
+                        onPractice={(() => handleRoute("/articulation/test"))}
                     />
                     <h1 className='text-[#C45500] text-[16px]'>{"SOUNDS I CAN SAY"}</h1>
                     {/* sound i can say*/}

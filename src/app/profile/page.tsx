@@ -8,7 +8,14 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation'
 export default function Profile() {
     const router = useRouter()
-
+    const handleRoute = async (href = '/') => {
+        try {
+            await router.prefetch(href)
+        } catch (err) {
+            console.warn('Prefetch failed, navigating anyway:', err)
+        }
+        router.push(href)
+    }
     return (
         <main className="flex flex-col items-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat gap-[8px] px-[33px] pt-[60px] sm:pt-[0px] sm:justify-center">
             {/* Header */}
@@ -76,7 +83,7 @@ export default function Profile() {
                         </div>
                     </div>
                     {/* Edit Profile */}
-                    <Button className='w-fit' onClick={() => router.push("profile/edit")}>{"EDIT PROFILE"}</Button>
+                    <Button className='w-fit' onClick={() => handleRoute("profile/edit")}>{"EDIT PROFILE"}</Button>
                 </div>
             </div>
             {/* Footer */}

@@ -12,7 +12,14 @@ export default function Edit() {
     const router = useRouter()
     const [showSave, setShowSave] = useState(false);
     const [showChangePassword, setShowChangePassword] = useState(false);
-
+    const handleRoute = async (href = '/') => {
+        try {
+            await router.prefetch(href)
+        } catch (err) {
+            console.warn('Prefetch failed, navigating anyway:', err)
+        }
+        router.push(href)
+    }
     function handleSave() {
         setShowSave(true);
     }
@@ -23,7 +30,7 @@ export default function Edit() {
     function saveEdit() {
         console.log("asd");
         //Error handling
-        router.push("/home");
+        handleRoute("/home");
     }
     function savePassword() {
         console.log("asd");

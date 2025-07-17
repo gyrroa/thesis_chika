@@ -16,10 +16,17 @@ export default function RegisterChild() {
     const router = useRouter();
     const [showTerms, setShowTerms] = useState(false);
     const { form, setForm, reset } = useRegistration();
-    const { mutateAsync, isPending } = useRegister();
+    const { mutateAsync } = useRegister();
     const [dots, setDots] = useState('');
     const [loading, setLoading] = useState(false)
-
+    const handleRoute = async (href = '/') => {
+        try {
+            await router.prefetch(href)
+        } catch (err) {
+            console.warn('Prefetch failed, navigating anyway:', err)
+        }
+        router.push(href)
+    }
     async function handleSubmit(e: FormEvent) {
         e.preventDefault();
         setShowTerms(true);
@@ -30,7 +37,7 @@ export default function RegisterChild() {
         try {
             await mutateAsync(form);
             reset();
-            router.push('/articulation/how');
+            handleRoute('/articulation/how');
         } catch (err: unknown) {
             // your existing type‐guard for ValidationErrorResponse
             if (isValidationErrorResponse(err)) {
@@ -44,7 +51,7 @@ export default function RegisterChild() {
             else {
                 console.error('Unexpected error:', err);
             }
-            setTimeout(() => router.push('/articulation/how'), 2000)
+            setTimeout(() => handleRoute('/articulation/how'), 2000)
         }
     }
 

@@ -51,7 +51,7 @@ export default function Home() {
                             <h1 className='text-[#C45500] text-[32px] tracking-[7px]'>{"[pu•sa]"}</h1>
                         </div>
                         <div className='flex items-center justify-center rounded-b-[10px] bg-[#F2E7DC] h-[50px]'>
-                            <div className='border-[#F90] bg-[#FFFDF2] border-2 w-[35px] h-[35px] rounded-full flex items-center justify-center'>
+                            <div className='border-[#F90] bg-[#FFFDF2] border-2 w-[35px] h-[35px] pl-[3px] rounded-full flex items-center justify-center'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="14" viewBox="0 0 12 14" fill="none">
                                     <path d="M12 7L0.75 13.4952V0.504809L12 7Z" fill="#FF9900" />
                                 </svg>

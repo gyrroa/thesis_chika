@@ -1,7 +1,20 @@
+'use client'
+
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+  const handleRoute = async (href = '/') => {
+    try {
+      await router.prefetch(href)
+    } catch (err) {
+      console.warn('Prefetch failed, navigating anyway:', err)
+    }
+    router.push(href)
+  }
+
   return (
     <main className="items-center justify-items-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat">
       <div className="flex flex-col items-center text-center justify-center gap-[20px] sm:gap-[41px] select-none pt-[120px]">
@@ -24,10 +37,12 @@ export default function Home() {
             </p>
           </div>
           <div className="flex flex-col gap-[20px] w-[311px] sm:w-[330px]">
-            <Button variant="default" href="user-type">
+            <Button variant="default" onClick={() => handleRoute("user-type")}>
               {"CREATE AN ACCOUNT"}
             </Button>
-            <Button variant="custom" href="login">{"LOG IN"}</Button>
+            <Button variant="custom" onClick={() => handleRoute("login")}>
+              {"LOG IN"}
+            </Button>
           </div>
         </>
       </div>

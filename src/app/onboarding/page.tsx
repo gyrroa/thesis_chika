@@ -11,7 +11,14 @@ export default function Onboarding() {
     const router = useRouter()
     const [page, setPage] = useState(1);
     const [fade, setFade] = useState(true);
-
+    const handleRoute = async (href = '/') => {
+        try {
+            await router.prefetch(href)
+        } catch (err) {
+            console.warn('Prefetch failed, navigating anyway:', err)
+        }
+        router.push(href)
+    }
     const nextPage = () => {
         setFade(false)
 
@@ -19,7 +26,7 @@ export default function Onboarding() {
             if (page < 3) {
                 setPage(page + 1)
             } else {
-                router.push('/ling6-sound/how')
+                handleRoute('/ling6-sound/how')
             }
             setFade(true)
         }, 200)

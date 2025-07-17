@@ -7,7 +7,14 @@ import { Button } from './button';
 export default function FooterNav() {
     const pathname = usePathname();
     const router = useRouter();
-
+    const handleRoute = async (href = '/') => {
+        try {
+            await router.prefetch(href)
+        } catch (err) {
+            console.warn('Prefetch failed, navigating anyway:', err)
+        }
+        router.push(href)
+    }
     const tabs = [
         { href: '/home', ssrc: '/home/home-s.svg', src: '/home/home.svg', alt: 'Home', disabled: false },
         { href: '/leaderboard', ssrc: '/home/leaderboard.svg', src: '/home/leaderboard.svg', alt: 'Leaderboard', disabled: true },
@@ -31,7 +38,7 @@ export default function FooterNav() {
                         variant={isActive ? 'default' : 'custom'}
                         disabled={disabled}
                         className="flex w-[50px] h-[50px] rounded-[20px] p-[10px]"
-                        onClick={() => !disabled && router.push(href)}
+                        onClick={() => !disabled && handleRoute(href)}
                     >
                         <Image
                             src={isActive ? ssrc : src}

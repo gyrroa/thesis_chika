@@ -29,7 +29,7 @@ export default function Home() {
     return (
         <main className="flex flex-col items-center justify-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat gap-[8px]">
             <Header />
-            <div className=' bg-[#F90]/35 h-1 w-[377px] rounded-full'>
+            <div className=' bg-[#F90]/35 h-1 w-full sm:w-[377px] rounded-full'>
                 <div className=' bg-[#F90] h-1 w-[40%] rounded-full'></div>
             </div>
             <div className="flex flex-col items-center text-center justify-center gap-[50px] select-none leading-tight">

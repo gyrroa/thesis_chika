@@ -31,7 +31,8 @@ export function TermsAndConditions({
             {'By registering your child, you'}
             <br />
             {'agree to CHIKA’s '}
-            <a className="font-bold" href="/terms_and_conditions.pdf">{'Terms and Conditions'}</a>
+            <br />
+            <a className="font-bold" href="/terms_and_conditions.pdf" target="_blank" rel="noopener noreferrer"><u>{'Terms and Conditions'}</u></a>
             {'.'}
           </p>
           <p>{'Do you agree?'}</p>

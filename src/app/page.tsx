@@ -16,8 +16,8 @@ export default function Home() {
   }
 
   return (
-    <main className="items-center justify-items-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat">
-      <div className="flex flex-col items-center text-center justify-center gap-[20px] sm:gap-[41px] select-none pt-[120px]">
+    <main className="flex justify-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat sm:pt-0 py-[30px]">
+      <div className="flex flex-col items-center text-center gap-[20px] sm:gap-[41px] select-none m-0 sm:m-auto">
         <>
           <Image
             src="/create-account/logo-with-text.svg"

@@ -16,7 +16,7 @@ export default function RegisterChild() {
     const router = useRouter();
     const [showTerms, setShowTerms] = useState(false);
     const { form, setForm, reset } = useRegistration();
-    const { mutateAsync, isPending } = useRegister();
+    const { mutateAsync } = useRegister();
     const [dots, setDots] = useState('');
     const [loading, setLoading] = useState(false)
 

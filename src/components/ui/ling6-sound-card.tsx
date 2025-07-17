@@ -11,7 +11,7 @@ interface SoundCardProps {
 const CARD_CLASSES =
   'flex flex-col h-auto w-auto rounded-[10px] border-1 border-[#C45500] ' +
   'bg-[#F2E7DC] p-[20px] gap-[10px] ' +
-  'transition-all duration-200 ease-out';
+  'transition-all duration-200 ease-out items-center';
 
 export const SoundCard: React.FC<SoundCardProps> = ({ label, src }) => {
   return (

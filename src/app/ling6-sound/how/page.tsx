@@ -6,12 +6,11 @@ import { useRouter } from 'next/navigation';
 
 export default function Home() {
     const router = useRouter();
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = () => {
         router.push('test');
     }
     return (
         <main className="flex items-center justify-center justify-items-center min-h-dvh  bg-[url('/background.svg')] bg-cover bg-no-repeat">
-
             <div className="flex flex-col items-center text-center justify-center gap-[30px] px-[30px] select-none leading-tight">
                 <Header showBackButton={false} />
                 <div className="flex flex-col gap-[5px]">
@@ -36,7 +35,7 @@ export default function Home() {
                         {"START TEST"}
                     </Button>
                 </div>
-                <h1 className='text-[#C45500] text-[16px] font-medium'>{"Skip sound test? "}<span className='underline text-[#F90]'>{"Click here"}</span></h1>
+                <h1 className='text-[#C45500] text-[16px] font-medium'>{"Skip sound test? "}<span className='text-[#F90] hover:brightness-110 active:brightness-95 duration-100 underline cursor-pointer' onClick={() => router.push("/registration/create-account")}>{"Click here"}</span></h1>
             </div>
         </main>
     );

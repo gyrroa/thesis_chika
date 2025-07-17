@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
+/* styles/globals.css */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -12,6 +13,37 @@ input[type="password"]::-webkit-clear-button,
 input[type="password"]::-webkit-inner-spin-button {
   display: none !important;
   appearance: none;
+}
+
+@keyframes outerPulse {
+  0%, 100% {
+    width: 65px; 
+    height: 65px;
+  }
+  50% {
+    width: 116px; 
+    height: 116px;
+  }
+}
+
+@keyframes middlePulse {
+  0%, 100% {
+    width: 65px; 
+    height: 65px;
+  }
+  50% {
+    width: 95px; 
+    height: 95px;
+  }
+}
+
+/* utility classes to apply the above */
+.pulse-outer {
+  animation: outerPulse 1s ease-in-out infinite;
+}
+
+.pulse-middle {
+  animation: middlePulse 1s ease-in-out infinite;
 }
 
 /* General reset */
@@ -101,6 +133,11 @@ body {
 
 img {
   pointer-events: none;
+}
+
+.outline-text {
+  -webkit-text-stroke: 4px #C45500;
+  paint-order: stroke fill;
 }
 
 /* 

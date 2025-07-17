@@ -29,9 +29,8 @@ export default function Home() {
 
   return (
     <main className="flex items-center justify-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat">
-      <div className="flex flex-col items-center text-center justify-center gap-[30px] px-[30px] select-none leading-tight">
+      <div className="flex flex-col items-center text-center justify-center gap-[30px] px-[30px] select-none">
         <Header />
-
         <div className="flex flex-col gap-[5px] text-[#C45500]">
           <h1 className="font-bold text-[32px] [text-shadow:0_0_4px_rgba(255,153,0,0.35)]">
             {"Ling6 Sound Test"}

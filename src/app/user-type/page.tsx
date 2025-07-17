@@ -9,7 +9,7 @@ export default function Home() {
   const [step, setStep] = useState<'userType' | 'child'>('userType');
 
   return (
-    <main className="flex items-center justify-center justify-items-center min-h-dvh bg-[#F2E7DC] bg-[url('/background.svg')] bg-cover bg-no-repeat">
+    <main className="flex items-center justify-center justify-items-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat">
 
       <div className="flex flex-col items-center text-center justify-center gap-[20px] sm:gap-[41px] select-none">
         {step === 'userType' && (

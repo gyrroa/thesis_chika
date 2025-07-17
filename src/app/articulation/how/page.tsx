@@ -1,18 +1,28 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/ui/header';
 import { useRouter } from 'next/navigation';
+import { DialogBox } from '@/components/ui/dialog-box';
 
 export default function Home() {
+    const [showDialog, setShowDialog] = useState(false);
     const router = useRouter();
     const handleStart = () => {
-        router.push('test');
+        setShowDialog(true);
     };
 
     return (
         <main className="flex items-center justify-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat px-[30px]">
+            {showDialog && (<DialogBox
+                onAgree={() => router.push('test')} 
+                onClose={() => setShowDialog(false)}
+                title={"Turn on your mic to begin!"}
+                description={"We need your microphone so we can hear you say the word."}
+                buttonLabel={"OKAY"}
+            />
+            )}
             <Header showBackButton={false} />
             <div className="flex flex-col items-center text-center justify-center gap-[35px] select-none leading-tight">
 

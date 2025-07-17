@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function Home() {
+export default function Onboarding() {
 
     const router = useRouter()
     const [page, setPage] = useState(1);
@@ -62,7 +62,10 @@ export default function Home() {
         <main className="flex items-center justify-center justify-items-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat">
 
             <div className="flex flex-col items-center text-center justify-center gap-[15px] select-none">
-                <Header onBackClick={backPage} />
+                {page === 1
+                    ? <Header showBackButton={false} />
+                    : <Header onBackClick={backPage} />
+                }
                 <div className="overflow-hidden w-[315px] h-[315px]">
                     <div
                         className="flex transition-transform duration-500 ease-in-out"

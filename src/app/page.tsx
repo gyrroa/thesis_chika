@@ -15,16 +15,16 @@ export default function Home() {
             priority
           />
           <div className="flex flex-col">
-            <h1 className="font-extrabold text-[19px] sm:text-4xl text-[#C45500] [text-shadow:0_0_4px_rgba(255,153,0,0.35)] leading-tight">
+            <h1 className="font-extrabold text-[19px] sm:text-4xl text-[#C45500] [text-shadow:0_0_4px_rgba(255,153,0,0.35)]">
               {"Speak Clearly, Learn Playfully"}
             </h1>
-            <p className="font-medium text-[16px] sm:text-2xl text-[#FF9900] leading-tight">
+            <p className="font-medium text-[16px] sm:text-2xl text-[#FF9900]">
               {"Boost your child’s speech from day"}<br />
               {"one with fun, AI-powered practice."}
             </p>
           </div>
           <div className="flex flex-col gap-[20px] w-[311px] sm:w-[330px]">
-            <Button variant="default" href="/registration/user-type">
+            <Button variant="default" href="user-type">
               {"CREATE AN ACCOUNT"}
             </Button>
             <Button variant="custom">{"LOG IN"}</Button>

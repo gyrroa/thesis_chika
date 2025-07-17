@@ -1,6 +1,7 @@
 // app/layout.tsx  (still a Server Component)
 import type { Metadata } from 'next'
 import { Quicksand } from 'next/font/google'
+import { Analytics } from "@vercel/analytics/next"
 
 import './globals.css'
 import { Providers } from './context/query-provider'
@@ -29,6 +30,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} antialiased bg-[#FFFDF2] leading-tight`}>
         <Providers>
           {children}
+          <Analytics />
         </Providers>
       </body>
     </html>

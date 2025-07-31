@@ -21,7 +21,7 @@ export default function PreAssessmentTest() {
     const imgSrc = item?.word.image_url ?? '';
     const word = item?.word.text ?? '';
     const syll = item?.word.syllables ?? '';
-    const transl = item?.word.transalation ?? '';  
+    const transl = item?.word.transalation ?? '';
     const max = preAssessment?.items_count ?? 1;
 
     // —— 3) recorder refs & state
@@ -54,7 +54,8 @@ export default function PreAssessmentTest() {
         setIsPulsing(false);
     }, []);  // no deps → stable
 
-    const { startVad, stopVad, isSpeaking } = useVad(
+    // const { startVad, stopVad, isSpeaking } = useVad(
+    const { startVad, stopVad } = useVad(
         endRecording,
         { threshold: 0.1, silenceDelay: 1200 }
     );

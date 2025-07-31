@@ -24,11 +24,11 @@ export default function FooterNav() {
 
     return (
         <footer className="
-      absolute bottom-0 w-full sm:static sm:w-[411px]
+      fixed bottom-0 z-50 w-full sm:w-[411px] 
       flex justify-between
       px-[50px] pt-[10px] pb-[15px]
       bg-[#FFFDF2] shadow-[0px_0px_17.9px_0px_rgba(196,85,0,0.35)]
-      sm:rounded-[50px] shrink-0
+      sm:rounded-[20px] shrink-0
     ">
             {tabs.map(({ href, ssrc, src, alt, disabled }) => {
                 const isActive = pathname === href;

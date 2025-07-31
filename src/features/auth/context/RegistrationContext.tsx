@@ -1,27 +1,21 @@
-'use client';
-
-import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+// src/contexts/RegistrationContext.tsx
+import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
 import type { RegisterPayload } from '../types';
 
 const defaultForm: RegisterPayload = {
-  is_verified: false, //temp
-  name:     '',
-  email:    '',
-  password: '',
-  child:    { nickname: '', age: 4, gender: 'male' },
+  is_verified: true, //temp
+  name:        '',
+  email:       '',
+  password:    '',
+  child:       [
+    { nickname: '', age: 6, gender: 'MALE' }
+  ],  
 };
 
 type RegCtx = {
-  form: RegisterPayload;
-  setForm: Dispatch<SetStateAction<RegisterPayload>>;
-  reset: () => void;
+  form:     RegisterPayload;
+  setForm:  Dispatch<SetStateAction<RegisterPayload>>;
+  reset:    () => void;
 };
 
 const RegistrationContext = createContext<RegCtx | undefined>(undefined);

@@ -16,7 +16,7 @@ export const AgeSelector = ({
   name = 'age',
   min = 1,
   max = 10,
-  defaultValue = 4,
+  defaultValue = 6,
   visibleRange = 2,
   onChange,
 }: AgeSelectorProps) => {

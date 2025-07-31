@@ -1,10 +1,12 @@
-// app/layout.tsx  (still a Server Component)
+// app/layout.tsx
 import type { Metadata } from 'next'
 import { Quicksand } from 'next/font/google'
 import { Analytics } from "@vercel/analytics/next"
 
 import './globals.css'
 import { Providers } from './context/query-provider'
+import AuthGuard from '@/features/auth/context/ProtectedRoute'
+import { InitAuth } from '@/features/auth/context/AppProvider'
 
 const geistSans = Quicksand({
   variable: '--font-sans',
@@ -29,7 +31,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} antialiased bg-[#FFFDF2] leading-tight`}>
         <Providers>
-          {children}
+          <AuthGuard >
+            <InitAuth />
+            {children}
+          </AuthGuard>
           <Analytics />
         </Providers>
       </body>

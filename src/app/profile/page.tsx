@@ -6,16 +6,22 @@ import FooterNav from '@/components/ui/footer-nav';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query';
+import { useUserChildren } from '@/features/users/hooks';
+import { User } from '@/features/auth/types';
 export default function Profile() {
-    const router = useRouter()
-    const handleRoute = async (href = '/') => {
-        try {
-            await router.prefetch(href)
-        } catch (err) {
-            console.warn('Prefetch failed, navigating anyway:', err)
-        }
-        router.push(href)
-    }
+    const router = useRouter();
+    const qc = useQueryClient();
+    const user = qc.getQueryData<User>(['auth', 'user']);
+    const { data: children } = useUserChildren(user?.id ?? '');
+    const handleLogout = () => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        qc.removeQueries({ queryKey: ['auth', 'user'] });
+        qc.removeQueries({ queryKey: ['user', 'children'] });
+        qc.removeQueries({ queryKey: ['user', 'child'] });
+        router.push('/');
+    };
     return (
         <main className="flex flex-col items-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat gap-[8px] px-[33px] pt-[60px] sm:pt-[0px] sm:justify-center">
             {/* Header */}
@@ -26,10 +32,19 @@ export default function Profile() {
                 <div className='flex flex-col gap-[24px] items-center'>
                     <div className='mx-[50px] flex bg-gradient-to-b from-[#F90] to-[#C45500] items-center font-bold px-[24.5px] py-[10px] rounded-[26px] gap-[15px]'>
                         <div className='rounded-full border border-[#FFFDF2] w-[50px] h-[50px] p-[2px]'>
-                            <div className='bg-[#FFFDF2] w-full h-full rounded-full '></div>
+                            <div className='bg-[#FFFDF2] w-full h-full rounded-full overflow-clip pt-[5px]'>
+                                <Image
+                                    src={children?.[0]?.gender?.toLowerCase() === "male" ? "/avatar/boy.svg" : "/avatar/girl.svg"} // adjust
+                                    alt={"avatar"}
+                                    width={children?.[0]?.gender?.toLowerCase() === "male" ? 34 : 38} //adjust
+                                    height={38}
+                                    className="m-auto overflow-hidden"
+                                    priority
+                                />
+                            </div>
                         </div>
                         <div className='flex flex-col gap-[24px]'>
-                            <h1 className='text-[24px] font-bold [text-shadow:0_0_16px_#C45500] text-[#FFFDF2] outline-text'>NAME</h1>
+                            <h1 className='text-[24px] font-bold [text-shadow:0_0_16px_#C45500] text-[#FFFDF2] outline-text uppercase'>{children?.[0]?.nickname}</h1>
                         </div>
                     </div>
                     {/* Personal Details */}
@@ -48,7 +63,7 @@ export default function Profile() {
                                     />
                                     <h1>{"AGE"}</h1>
                                 </div>
-                                <h1 className='text-[#C45500] text-[32px] text-center font-bold w-full'>{"8"}</h1>
+                                <h1 className='text-[#C45500] text-[32px] text-center font-bold w-full'>{children?.[0]?.age}</h1>
                             </div>
                             {/* VOICE TYPE */}
                             <div className='flex flex-col bg-[#FFFDF2] border-2 border-[#F90] py-[25px] px-[30px] rounded-[30px] items-center shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)] w-auto'>
@@ -63,7 +78,7 @@ export default function Profile() {
                                     />
                                     <h1>{"VOICE TYPE"}</h1>
                                 </div>
-                                <h1 className='text-[#C45500] text-[32px] text-center font-bold w-full'>{"Girl"}</h1>
+                                <h1 className='text-[#C45500] text-[32px] text-center font-bold w-full'>{children?.[0]?.gender}</h1>
                             </div>
                         </div>
                         {/* EMAIL */}
@@ -79,11 +94,14 @@ export default function Profile() {
                                 />
                                 <h1>{"EMAIL"}</h1>
                             </div>
-                            <h1 className='text-[#C45500] text-[20px] font-bold w-full'>{"andones@mcm.edu.ph"}</h1>
+                            <h1 className='text-[#C45500] text-[20px] font-bold w-full'>{user?.email || ''}</h1>
                         </div>
                     </div>
                     {/* Edit Profile */}
-                    <Button className='w-fit' onClick={() => handleRoute("profile/edit")}>{"EDIT PROFILE"}</Button>
+                    <div className='flex gap-[10px]'>
+                        <Button className='w-fit' variant={'custom'} onClick={handleLogout}>{"LOG OUT"}</Button>
+                        <Button className='w-fit' onClick={() => router.push("profile/edit")}>{"EDIT PROFILE"}</Button>
+                    </div>
                 </div>
             </div>
             {/* Footer */}

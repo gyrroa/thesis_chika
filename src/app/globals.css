@@ -51,6 +51,26 @@ input[type="password"] {
   appearance: none;
 }
 
+/* Custom dashed underline using pseudo-element */
+.underline-custom-dash {
+  position: relative;
+  display: inline-block;
+}
+
+.underline-custom-dash::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px; /* thickness of the underline */
+  background-image: repeating-linear-gradient(
+    to right,
+    #F90 0 4px,        /* Dash: from 0 to 8px */
+    transparent 4px 12px  /* Gap: from 8px to 16px */
+  );
+}
+/* Root */
 :root {
   font-family: 'Quicksand';
   line-height: 125%;
@@ -137,6 +157,11 @@ img {
 
 .outline-text {
   -webkit-text-stroke: 4px #C45500;
+  paint-order: stroke fill;
+}
+
+.outline-text-2 {
+  -webkit-text-stroke: 0.5px #C45500;
   paint-order: stroke fill;
 }
 

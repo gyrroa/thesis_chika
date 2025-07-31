@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Header } from '@/components/ui/header';
 import { useRouter } from 'next/navigation';
 
-export default function Home() {
+export default function Ling6How() {
     const router = useRouter();
     const handleSubmit = () => {
         router.push('test');

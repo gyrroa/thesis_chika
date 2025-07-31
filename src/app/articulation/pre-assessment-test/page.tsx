@@ -1,57 +1,169 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Header } from '@/components/ui/header';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import ProgressBar from '@/components/ui/progress-bar';
+import { useVad } from '@/lib/customVad';
 
-export default function Home() {
-    const router = useRouter();
-    const [isPulsing, setIsPulsing] = useState<boolean>(false)
+// Extendable MediaRecorder with WAV encoder
+import { MediaRecorder as EMR, IMediaRecorder, register } from 'extendable-media-recorder';
+import { connect as wavConnect } from 'extendable-media-recorder-wav-encoder';
+import { usePreAssessment } from '@/features/exercises/context/PreAssessmentContext';
 
-    const handleRoute = async (href = '/') => {
-        try {
-            await router.prefetch(href)
-        } catch (err) {
-            console.warn('Prefetch failed, navigating anyway:', err)
+export default function PreAssessmentTest() {
+    // —— 1) get your pre-assessment state from context
+    const { data: preAssessment } = usePreAssessment();
+
+    // —— 2) pick the first item (or nothing)
+    const [idx, setIdx] = useState(0);
+    const item = preAssessment?.items?.[idx];
+    const imgSrc = item?.word.image_url ?? '';
+    const word = item?.word.text ?? '';
+    const syll = item?.word.syllables ?? '';
+    const transl = item?.word.transalation ?? '';  
+    const max = preAssessment?.items_count ?? 1;
+
+    // —— 3) recorder refs & state
+    const [isRecording, setIsRecording] = useState(false);
+    const [isPulsing, setIsPulsing] = useState(false);
+    const mediaRef = useRef<IMediaRecorder | null>(null);
+    const chunks = useRef<Blob[]>([]);
+
+    // —— 4) prepare WAV once
+    const wavReady = useRef<Promise<void>>(Promise.resolve());
+    useEffect(() => {
+        wavReady.current = (async () => {
+            try {
+                const broker = await wavConnect();
+                await register(broker);
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    console.warn('WAV encoder registration skipped:', err.message);
+                } else {
+                    console.warn('WAV encoder registration skipped:', err);
+                }
+            }
+        })();
+    }, []);
+
+    // —— 5) VAD hook
+    const endRecording = useCallback(() => {
+        mediaRef.current?.stop();
+        setIsRecording(false);
+        setIsPulsing(false);
+    }, []);  // no deps → stable
+
+    const { startVad, stopVad, isSpeaking } = useVad(
+        endRecording,
+        { threshold: 0.1, silenceDelay: 1200 }
+    );
+    const handleNextTest = () => {
+        setIdx(idx + 1);
+    }
+    // —— 6) mic handler
+    const handleMic = async () => {
+        await wavReady.current;
+
+        if (!isRecording) {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const recorder = new EMR(stream, { mimeType: 'audio/wav' });
+            mediaRef.current = recorder;
+            chunks.current = [];
+
+            recorder.ondataavailable = e => {
+                if (e.data.size) chunks.current.push(e.data);
+            };
+            recorder.onstop = () => {
+                const wavBlob = new Blob(chunks.current, { type: 'audio/wav' });
+                const url = URL.createObjectURL(wavBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${word}.wav`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+            recorder.start();
+            await startVad(stream);
+            setIsRecording(true);
+            setIsPulsing(true);
+        } else {
+            handleNextTest();
+            mediaRef.current?.stop();
+            stopVad();
+            setIsRecording(false);
+            setIsPulsing(false);
         }
-        router.push(href)
-    }
+    };
 
-    const handleMic = () => {
-        console.log("mic test")
-        setIsPulsing(p => !p)
-        setTimeout(() => {
-            handleRoute("/home");
-        }, 2000);
-    }
+    // —— 7) tooltip behavior
+    const [showTooltip, setShowTooltip] = useState(false);
+    useEffect(() => {
+        if (!showTooltip) return;
+        const t = setTimeout(() => setShowTooltip(false), 2000);
+        return () => clearTimeout(t);
+    }, [showTooltip]);
+
+    // —— 8) dynamic font sizing
+    const fontSize = `${Math.max(20, 32 - (word.length - 4) * 1.5)}px`;
+
 
     return (
         <main className="flex flex-col items-center justify-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat gap-[8px]">
             <Header />
-            <div className=' bg-[#F90]/35 h-1 w-full sm:w-[377px] rounded-full'>
-                <div className=' bg-[#F90] h-1 w-[40%] rounded-full'></div>
-            </div>
+            {/* Progress Bar */}
+            <ProgressBar value={idx + 1} max={max} />
             <div className="flex flex-col items-center text-center justify-center gap-[50px] select-none leading-tight">
-
                 <div className="flex flex-col gap-[25px] bg-[linear-gradient(180deg,_#F90_0%,_#C45500_100%)] rounded-[45px] w-[377px] h-[391px] py-[30px] px-[33px] [box-shadow:0px_127px_36px_0px_rgba(196,85,0,0.01),0px_81px_33px_0px_rgba(196,85,0,0.05),0px_46px_27px_0px_rgba(196,85,0,0.18),0px_20px_20px_0px_rgba(196,85,0,0.31),0px_5px_11px_0px_rgba(196,85,0,0.36)]">
                     <h1 className="font-bold text-[24px] [text-shadow:0_0_16px_#C45500] text-[#FFFDF2] outline-text">
                         {"Can you say the word? Let's hear it!"}
                     </h1>
-                    <div className='bg-[#FFFDF2] rounded-[10px] h-full w-full border-2 border-[#CB5D00] pt-[15px] flex flex-col gap-[10px]'>
-                        <div>
+                    <div className='bg-[#FFFDF2] rounded-[10px] h-full w-full border-2 border-[#CB5D00] pt-[15px] flex flex-col justify-between'>
+                        <div className='flex flex-col items-center'>
                             <Image
-                                src={"/articulation/pusa.svg"}
+                                src={imgSrc}
                                 alt={"pusa"}
                                 width={127}
                                 height={132}
                                 className="m-auto w-[127px] h-[132px] filter drop-shadow-[0px_0px_16px_rgba(196,85,0,0.35)]"
                                 priority
                             />
-                            <h1 className='text-[#C45500] text-[32px] tracking-[7px]'>{"[pu•sa]"}</h1>
+                            <div
+                                className={`relative flex items-center justify-center cursor-pointer group ${showTooltip ? 'show-tooltip' : ''}`}
+                                style={{ fontSize }}
+                                onClick={() => setShowTooltip(true)}
+                            >
+                                {/* Translation Tooltip */}
+                                <div
+                                    className={`cursor-default absolute -top-10 z-10 rounded-[10px] px-[15px] py-[10px] whitespace-nowrap transition-all duration-300 ease-in-out bg-[#C45500]/0 opacity-0 pointer-events-none group-[.show-tooltip]:bg-[#C45500]/90 group-[.show-tooltip]:opacity-100 group-[.show-tooltip]:pointer-events-auto group-[.show-tooltip]:border-[#C45500]/90`}
+                                >
+                                    <span className="text-[#FFFDF2] text-[14px] font-bold text-center block leading-tight uppercase">
+                                        {transl.split('').map((char, index) => (
+                                            <span
+                                                key={index}
+                                                className={index < transl.length - 1 ? 'tracking-[3px]' : ''}
+                                            >
+                                                {char}
+                                            </span>
+                                        ))}
+                                    </span>
+
+                                    {/* Tooltip Triangle */}
+                                    <div
+                                        className={`absolute left-1/2 top-full -translate-x-1/2 w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent transition-colors duration-300 ${showTooltip ? 'border-t-[#C45500]/90' : 'border-t-[#C45500]/0'}`}
+                                    />
+                                </div>
+                                {/* Word */}
+                                <h1 className="text-[#C45500] tracking-[7px] text-center">
+                                    {"["}
+                                    <span className="underline-custom-dash inline-block">{syll}</span>
+                                </h1>
+                                <h1 className='text-[#C45500]'>{"]"}</h1>
+                            </div>
                         </div>
                         <div className='flex items-center justify-center rounded-b-[10px] bg-[#F2E7DC] h-[50px]'>
-                            <div className='border-[#F90] bg-[#FFFDF2] border-2 w-[35px] h-[35px] pl-[3px] rounded-full flex items-center justify-center'>
+                            {/* Play Sound */}
+                            <div className='border-[#F90] bg-[#FFFDF2] border-2 w-[35px] h-[35px] pl-[3px] rounded-full flex items-center justify-center cursor-pointer'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="14" viewBox="0 0 12 14" fill="none">
                                     <path d="M12 7L0.75 13.4952V0.504809L12 7Z" fill="#FF9900" />
                                 </svg>

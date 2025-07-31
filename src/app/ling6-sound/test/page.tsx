@@ -6,7 +6,7 @@ import { Header } from '@/components/ui/header';
 import { useRouter } from 'next/navigation';
 import { SoundCard } from '@/components/ui/ling6-sound-card';
 
-export default function Home() {
+export default function Ling6Test() {
   const router = useRouter();
 
   const sounds = [

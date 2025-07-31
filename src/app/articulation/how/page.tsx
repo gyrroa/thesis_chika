@@ -25,7 +25,7 @@ export default function Home() {
     return (
         <main className="flex items-center justify-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat px-[30px]">
             {showDialog && (<DialogBox
-                onAgree={() => handleRoute("test")}
+                onAgree={() => handleRoute("pre-assessment-test")}
                 onClose={() => setShowDialog(false)}
                 title={"Turn on your mic to begin!"}
                 description={"We need your microphone so we can hear you say the word."}

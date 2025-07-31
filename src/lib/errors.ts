@@ -22,7 +22,7 @@ export function isValidationErrorResponse(
 }
 
 export function logFieldErrors(errors: FieldError[]): void {
-  console.group("🛑 422 Validation Errors");
+  console.group("422 Validation Errors");
   errors.forEach(({ loc, msg }) =>
     console.log(`${loc.join(" → ")}: ${msg}`)
   );

@@ -18,6 +18,7 @@ import { useUserChildren } from '@/features/users/hooks';
 import { AttemptV2Response } from '@/features/exercises/types';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import ChikaLoading from '@/components/animation/chika-loading';
 
 export default function Assessment() {
     const router = useRouter();
@@ -28,7 +29,7 @@ export default function Assessment() {
     const childId = children?.[0]?.id ?? '';
 
     // get your pre-assessment state from context
-    const { data: preAssessment } = usePreAssessment();
+    const { data: preAssessment, isLoading } = usePreAssessment();
 
     // pick the first item (or nothing)
     const [idx, setIdx] = useState(0);
@@ -39,7 +40,7 @@ export default function Assessment() {
     const stressedWord = item?.word.stress ?? '';
     const displayStressedWord = stressedWord.replace(/-/g, '');
     const syll = item?.word.syllables ?? '';
-    const transl = item?.word.transalation ?? '';
+    const transl = item?.word.translation ?? '';
     const max = preAssessment?.items_count ?? 1;
     const [attemptedWord, setAttemptedWord] = useState<string>("");
     const [attemptedStressedWord, setAttemptedStressedWord] = useState<string>("");
@@ -213,6 +214,9 @@ export default function Assessment() {
             <Header />
             {/* Progress Bar */}
             <ProgressBar value={idx + 1} max={max} />
+            {isLoading && (
+                <ChikaLoading />
+            )}
             {isPending &&
                 <ChikaListening />
             }

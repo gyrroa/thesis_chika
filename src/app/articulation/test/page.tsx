@@ -10,11 +10,29 @@ import { useVad } from '@/lib/customVad';
 import { MediaRecorder as EMR, IMediaRecorder, register } from 'extendable-media-recorder';
 import { connect as wavConnect } from 'extendable-media-recorder-wav-encoder';
 import { usePracticeSoundContext } from '@/features/exercises/context/PracticeSoundContext';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import ChikaListening from '@/components/animation/chika-listening';
+import { useSubmitAttempt } from '@/features/exercises/hooks';
+import { AttemptV2Response } from '@/features/exercises/types';
+import { useQueryClient } from '@tanstack/react-query';
+import { useUserChildren } from '@/features/users/hooks';
+import { User } from '@/features/auth/types';
 import ChikaLoading from '@/components/animation/chika-loading';
 
 export default function Test() {
+    const router = useRouter();
+    // child id
+    const qc = useQueryClient();
+    const user = qc.getQueryData<User>(['auth', 'user']);
+    const { data: children } = useUserChildren(user?.id ?? '');
+    const childId = children?.[0]?.id ?? '';
     // —— 1) get your pre-assessment state from context
+    // modals
+    const [correct, setCorrect] = useState(false);
+    const [incorrect, setIncorrect] = useState(false);
+    const [incorrectStress, setIncorrectStress] = useState(false);
+    const [finished, setFinished] = useState(false);
 
     const max = 10;
     const searchParams = useSearchParams();
@@ -41,10 +59,14 @@ export default function Test() {
     const [idx, setIdx] = useState(0);
     const item = assessment?.items?.[idx];
     const imgSrc = item?.word.image_url ?? 'logo.svg';
+    const audioSrc = item?.word.audio_url ?? '';
     const word = item?.word.text ?? '';
+    const stressedWord = item?.word.stress ?? '';
+    const displayStressedWord = stressedWord.replace(/-/g, '');
     const syll = item?.word.syllables ?? '';
     const transl = item?.word.translation ?? '';
-
+    const [attemptedWord, setAttemptedWord] = useState<string>("");
+    const [attemptedStressedWord, setAttemptedStressedWord] = useState<string>("");
     // —— 3) recorder refs & state
     const [isRecording, setIsRecording] = useState(false);
     const [isPulsing, setIsPulsing] = useState(false);
@@ -80,12 +102,64 @@ export default function Test() {
         endRecording,
         { threshold: 0.02, silenceDelay: 1200 }
     );
-    // const handleAssessment = () => {
-
-    // }
+    // play word sound
+    const playSound = () => {
+        const audio = new Audio(audioSrc);
+        audio.play().catch((err) => {
+            console.error('Audio playback failed:', err);
+        });
+    };
+    // play word sound
+    const playNextSound = () => {
+        const audio = new Audio(assessment?.items?.[idx + 1]?.word.audio_url ?? "");
+        audio.play().catch((err) => {
+            console.error('Audio playback failed:', err);
+        });
+    };
+    // Play first time
+    useEffect(() => {
+        if (idx === 0 && audioSrc) {
+            const audio = new Audio(audioSrc);
+            audio.play().catch((err) => {
+                console.warn("Autoplay blocked or failed:", err);
+            });
+        }
+    }, [idx, audioSrc]);
+    // Next Test
     const handleNextTest = () => {
-        setIdx(idx + 1);
+        if (idx + 1 < max) {
+            setIdx(idx + 1);
+            playNextSound();
+        } else {
+            setFinished(true);
+        }
+        setCorrect(false);
+        setIncorrect(false);
+        setIncorrectStress(false);
     }
+
+    // Handle Result
+    const handleResult = (resp: AttemptV2Response) => {
+        setAttemptedWord(resp?.attempt_answer);
+        if (resp?.correct && resp?.stress_correct) {
+            setCorrect(true);
+        }
+        else if (resp?.correct && !resp?.stress_correct) {
+            setAttemptedStressedWord(resp?.attempt_answer_stressed);
+            setIncorrectStress(true);
+        }
+        else {
+            setIncorrect(true);
+        }
+    }
+    const {
+        mutate: submitAttempt,
+        // mutateAsync,
+        // data,
+        isPending,
+        // isError,
+        // error,
+    } = useSubmitAttempt();
     // —— 6) mic handler
     const handleMic = async () => {
         await wavReady.current;
@@ -96,19 +170,37 @@ export default function Test() {
             mediaRef.current = recorder;
             chunks.current = [];
 
-            recorder.ondataavailable = e => {
+            recorder.ondataavailable = (e) => {
                 if (e.data.size) chunks.current.push(e.data);
             };
+
             recorder.onstop = () => {
-                handleNextTest();
+                stream.getTracks().forEach(t => t.stop());
+                stopVad();
+                setIsRecording(false);
+                setIsPulsing(false);
+
                 const wavBlob = new Blob(chunks.current, { type: 'audio/wav' });
-                const url = URL.createObjectURL(wavBlob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${word}.wav`;
-                a.click();
-                URL.revokeObjectURL(url);
+                const wavFile = new File([wavBlob], `${word}.wav`, { type: 'audio/wav' });
+
+                submitAttempt(
+                    {
+                        query: {
+                            child_id: childId,
+                            assessment_item_id: item?.dynamic_assessment_item_id ?? 0,
+                            attempt_type: 'dynamic',
+                        },
+                        payload: { file: wavFile },
+                    },
+                    {
+                        onSuccess: (resp) => {
+                            handleResult(resp);
+                        },
+                        onError: (err) => console.error(err),
+                    }
+                );
             };
+
             recorder.start();
             await startVad(stream);
             setIsRecording(true);
@@ -141,6 +233,96 @@ export default function Test() {
             {isLoading && (
                 <ChikaLoading />
             )}
+            {isPending &&
+                <ChikaListening />
+            }
+            {/* Correct Result */}
+            {correct &&
+                <div className='absolute h-screen w-screen bg-black/50 items-center justify-center flex z-10'>
+                    <div className='flex flex-col gap-[20px] rounded-[45px] bg-[#FFFDF2] [box-shadow:0_-1px_24.1px_0_rgba(196,85,0,0.3)] p-[30px] z-50 items-center'>
+                        <Image
+                            src={`/chika/hapi.svg`}
+                            alt={`hapi`}
+                            width={157}
+                            height={157}
+                            priority
+                            className='max-w-[157px] max-h-[161px]'
+                        />
+                        <div className='w-full text-center flex flex-col gap-[10px]'>
+                            <h1 className='text-[#C45500] text-[32px] font-bold [text-shadow:0_0_4px_rgba(255,153,0,0.35)]'>Great job!</h1>
+                            <p className='text-[#FF9900] text-[20px] font-medium'>You said it perfectly.<br /><b>CHIKA is proud of you!</b></p>
+                            <p className='text-[#FF9900] text-[20px] font-medium'> Ready for the next word?</p>
+                        </div>
+                        <Button className='w-[311px]' onClick={handleNextTest} soundType='confirm'>NEXT WORD</Button>
+                        <Button variant={'custom'} onClick={() => setCorrect(false)}>TRY AGAIN</Button>
+                    </div>
+                </div>
+            }
+            {/* Inorrect Result */}
+            {incorrect &&
+                <div className='absolute h-screen w-screen bg-black/50 items-center justify-center flex z-10'>
+                    <div className='flex flex-col gap-[20px] rounded-[45px] bg-[#FFFDF2] [box-shadow:0_-1px_24.1px_0_rgba(196,85,0,0.3)] p-[30px] z-50 items-center'>
+                        <Image
+                            src={`/chika/angy.svg`}
+                            alt={`angy`}
+                            width={157}
+                            height={157}
+                            priority
+                            className='max-w-[157px] max-h-[161px]'
+                        />
+                        <div className='text-center flex flex-col gap-[10px] w-[311px]'>
+                            <h1 className='text-[#C45500] text-[32px] font-bold [text-shadow:0_0_4px_rgba(255,153,0,0.35)]'>{"Oops! That didn’t sound quite right."}</h1>
+                            <p className='text-[#FF9900] text-[20px] font-medium'>{`You said: `}<b>{`“${attemptedWord}”`}</b><br />{` But the word is: `}<b>{`“${word}”`}</b></p>
+                            <p className='text-[#FF9900] text-[20px] font-medium'> {"Let’s try again together — you’re getting closer!"}</p>
+                        </div>
+                        <Button onClick={() => setIncorrect(false)}>TRY AGAIN</Button>
+                        <Button variant={"custom"} onClick={handleNextTest}>SKIP</Button>
+                    </div>
+                </div >
+            }
+            {/* Inorrect Stress */}
+            {incorrectStress &&
+                <div className='absolute h-screen w-screen bg-black/50 items-center justify-center flex z-10'>
+                    <div className='flex flex-col gap-[20px] rounded-[45px] bg-[#FFFDF2] [box-shadow:0_-1px_24.1px_0_rgba(196,85,0,0.3)] p-[30px] z-50 items-center'>
+                        <Image
+                            src={`/chika/angy.svg`}
+                            alt={`angy`}
+                            width={157}
+                            height={157}
+                            priority
+                            className='max-w-[157px] max-h-[161px]'
+                        />
+                        <div className='text-center flex flex-col gap-[10px] w-[311px]'>
+                            <h1 className='text-[#C45500] text-[32px] font-bold [text-shadow:0_0_4px_rgba(255,153,0,0.35)]'>{"Almost there!"}</h1>
+                            <p className='text-[#FF9900] text-[20px] font-medium'>{`You said: `}<b>{`“${attemptedStressedWord}”`}</b><br />{` But the word is: `}<b>{`“${displayStressedWord}”`}</b></p>
+                            <p className='text-[#FF9900] text-[20px] font-medium'> {"Try putting the stress on the right syllable!"}</p>
+                        </div>
+                        <Button onClick={() => setIncorrectStress(false)}>TRY AGAIN</Button>
+                        <Button variant={"custom"} onClick={handleNextTest}>SKIP</Button>
+                    </div>
+                </div >
+            }
+            {/* Inorrect Stress */}
+            {finished &&
+                <div className='absolute h-screen w-screen bg-black/50 items-center justify-center flex z-10'>
+                    <div className='flex flex-col gap-[20px] rounded-[45px] bg-[#FFFDF2] [box-shadow:0_-1px_24.1px_0_rgba(196,85,0,0.3)] p-[30px] z-50 items-center'>
+                        <Image
+                            src={`/chika/hapi.svg`}
+                            alt={`angy`}
+                            width={157}
+                            height={157}
+                            priority
+                            className='max-w-[157px] max-h-[161px]'
+                        />
+                        <div className='text-center flex flex-col gap-[10px] w-[311px]'>
+                            <h1 className='text-[#C45500] text-[32px] font-bold [text-shadow:0_0_4px_rgba(255,153,0,0.35)]'>{"Yay! You finished all the words!"}</h1>
+                            <p className='text-[#FF9900] text-[20px] font-medium'>{`CHIKA is super proud of you for practicing so well today.`}</p>
+                            <p className='text-[#FF9900] text-[20px] font-medium'> {"That was awesome — see you again soon, "}<b>{"Word Champ!"}</b></p>
+                        </div>
+                        <Button onClick={() => router.push("/home")}>BACK HOME</Button>
+                    </div>
+                </div >
+            }
             <div className="flex flex-col items-center text-center justify-center gap-[50px] select-none leading-tight">
                 <div className="flex flex-col gap-[25px] bg-[linear-gradient(180deg,_#F90_0%,_#C45500_100%)] rounded-[45px] w-[377px] h-[391px] py-[30px] px-[33px] [box-shadow:0px_127px_36px_0px_rgba(196,85,0,0.01),0px_81px_33px_0px_rgba(196,85,0,0.05),0px_46px_27px_0px_rgba(196,85,0,0.18),0px_20px_20px_0px_rgba(196,85,0,0.31),0px_5px_11px_0px_rgba(196,85,0,0.36)]">
                     <h1 className="font-bold text-[24px] [text-shadow:0_0_16px_#C45500] text-[#FFFDF2] outline-text">
@@ -192,7 +374,9 @@ export default function Test() {
                         </div>
                         <div className='flex items-center justify-center rounded-b-[10px] bg-[#F2E7DC] h-[50px]'>
                             {/* Play Sound */}
-                            <div className='border-[#F90] bg-[#FFFDF2] border-2 w-[35px] h-[35px] pl-[3px] rounded-full flex items-center justify-center cursor-pointer'>
+                            <div
+                                onClick={playSound}
+                                className='border-[#F90] bg-[#FFFDF2] border-2 w-[35px] h-[35px] pl-[3px] rounded-full flex items-center justify-center cursor-pointer'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="14" viewBox="0 0 12 14" fill="none">
                                     <path d="M12 7L0.75 13.4952V0.504809L12 7Z" fill="#FF9900" />
                                 </svg>
@@ -256,6 +440,6 @@ export default function Test() {
                     </div>
                 </button>
             </div>
-        </main>
+        </main >
     );
 }

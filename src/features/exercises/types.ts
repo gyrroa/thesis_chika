@@ -4,7 +4,7 @@ export interface Word {
   text: string;
   stress: string;
   syllables: string;
-  transalation: string;
+  translation: string;
   image_url: string;
   audio_url: string | null;
 }

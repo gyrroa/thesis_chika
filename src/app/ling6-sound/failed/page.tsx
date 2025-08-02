@@ -12,7 +12,7 @@ export default function Ling6Failed() {
     return (
         <main className="w-screen min-h-dvh bg-[#F2E7DC] bg-[url('/background.svg')] bg-cover bg-no-repeat flex flex-col">
             <Header />
-            <div className="w-full flex-1 overflow-y-auto flex flex-col items-center text-center pt-[60px] sm:pt-0">
+            <div className="w-full flex-1 overflow-y-auto flex flex-col items-center text-center pt-[60px] sm:pt-0 sm:justify-center">
                 <div className='flex flex-col sm:max-w-fit sm:px-[32px] sm:max-h-fit grow bg-[#FFFDF2] sm:rounded-[45px] rounded-t-[45px] text-[#C45500] [box-shadow:0px_-1px_24.1px_0px_rgba(196,85,0,0.30)] w-full'>
                     <div className="flex flex-col max-w-[311px] mx-auto sm:py-[50px] pt-[50px] pb-[50px] gap-[28px]">
                         <div className='flex flex-col gap-[5px] items-center'>

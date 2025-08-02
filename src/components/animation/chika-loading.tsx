@@ -23,7 +23,7 @@ export default function ChikaLoading() {
       >
         <div className="text-[#F90] text-[20px] font-medium flex flex-col gap-[10px]">
           <Image
-            src={`/animation/Order=${frame}.svg`}
+            src={`/animation/loading/Order=${frame}.png`}
             alt={`Frame ${frame}`}
             width={200}
             height={200}

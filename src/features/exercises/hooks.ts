@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import { getPreAssessmentItems } from './service';
-import type { PreAssessmentResponse } from './types';
+//exercises/hooks.ts
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { attemptV2, createSoundPractice, getPreAssessmentItems, getSoundMastery } from './service';
+import type { AttemptV2Response, AttemptV2Variables, PracticeSoundVariables, PreAssessmentResponse, SoundMastery, SoundPracticeResponse } from './types';
 
 /**
  * React Query hook for fetching pre-assessment items.
@@ -13,5 +14,47 @@ export function usePreAssessmentItems(child_id: string) {
     enabled: Boolean(child_id),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 2,
+  });
+}
+
+export function useSoundMastery(child_id: string) {
+  return useQuery<SoundMastery[], Error>({
+    queryKey: ['soundMastery', child_id],
+    queryFn: () => getSoundMastery(child_id),
+    enabled: Boolean(child_id),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
+  });
+}
+/**
+ * React-Query mutation for creating a Sound Practice assessment
+ * @param child_id - the child’s UUID
+ */
+export function usePracticeSound(child_id: string) {
+  return useMutation<SoundPracticeResponse, Error, PracticeSoundVariables>({
+    mutationFn: (vars) => createSoundPractice(child_id, vars),
+  });
+}
+
+/**
+ * Args for submitAttempt:
+ *  - query: the URL‐query params (child_id, assessment_item_id, attempt_type)
+ *  - payload: the multipart body (file)
+ */
+export interface SubmitAttemptArgs {
+  query: Pick<AttemptV2Variables, 'child_id' | 'assessment_item_id' | 'attempt_type'>;
+  payload: { file: File };
+}
+
+/**
+ * React‐Query mutation for Attempt V2, using { query, payload } signature
+ */
+export function useSubmitAttempt() {
+  return useMutation<AttemptV2Response, Error, SubmitAttemptArgs>({
+    mutationFn: ({ query, payload }) =>
+      attemptV2({
+        ...query,
+        file: payload.file,
+      }),
   });
 }

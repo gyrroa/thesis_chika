@@ -9,20 +9,41 @@ import { useVad } from '@/lib/customVad';
 // Extendable MediaRecorder with WAV encoder
 import { MediaRecorder as EMR, IMediaRecorder, register } from 'extendable-media-recorder';
 import { connect as wavConnect } from 'extendable-media-recorder-wav-encoder';
-import { usePreAssessment } from '@/features/exercises/context/PreAssessmentContext';
+import { usePracticeSoundContext } from '@/features/exercises/context/PracticeSoundContext';
+import { useSearchParams } from 'next/navigation';
+import ChikaLoading from '@/components/animation/chika-loading';
 
-export default function PreAssessmentTest() {
+export default function Test() {
     // —— 1) get your pre-assessment state from context
-    const { data: preAssessment } = usePreAssessment();
+
+    const max = 10;
+    const searchParams = useSearchParams();
+    const sound = searchParams.get('sound') ?? '';
+
+    const {
+        mutate,
+        data: assessment,
+        isLoading,
+        // isError,
+        // error,
+    } = usePracticeSoundContext();
+
+    useEffect(() => {
+        if (!isLoading && !assessment && sound) {
+            mutate({
+                sound,
+                max_items: max,
+            });
+        }
+    }, [mutate, sound, max, isLoading, assessment]);
 
     // —— 2) pick the first item (or nothing)
     const [idx, setIdx] = useState(0);
-    const item = preAssessment?.items?.[idx];
-    const imgSrc = item?.word.image_url ?? '';
+    const item = assessment?.items?.[idx];
+    const imgSrc = item?.word.image_url ?? 'logo.svg';
     const word = item?.word.text ?? '';
     const syll = item?.word.syllables ?? '';
-    const transl = item?.word.transalation ?? '';
-    const max = preAssessment?.items_count ?? 1;
+    const transl = item?.word.translation ?? '';
 
     // —— 3) recorder refs & state
     const [isRecording, setIsRecording] = useState(false);
@@ -57,8 +78,11 @@ export default function PreAssessmentTest() {
     // const { startVad, stopVad, isSpeaking } = useVad(
     const { startVad, stopVad } = useVad(
         endRecording,
-        { threshold: 0.1, silenceDelay: 1200 }
+        { threshold: 0.02, silenceDelay: 1200 }
     );
+    // const handleAssessment = () => {
+
+    // }
     const handleNextTest = () => {
         setIdx(idx + 1);
     }
@@ -76,6 +100,7 @@ export default function PreAssessmentTest() {
                 if (e.data.size) chunks.current.push(e.data);
             };
             recorder.onstop = () => {
+                handleNextTest();
                 const wavBlob = new Blob(chunks.current, { type: 'audio/wav' });
                 const url = URL.createObjectURL(wavBlob);
                 const a = document.createElement('a');
@@ -89,7 +114,6 @@ export default function PreAssessmentTest() {
             setIsRecording(true);
             setIsPulsing(true);
         } else {
-            handleNextTest();
             mediaRef.current?.stop();
             stopVad();
             setIsRecording(false);
@@ -114,6 +138,9 @@ export default function PreAssessmentTest() {
             <Header />
             {/* Progress Bar */}
             <ProgressBar value={idx + 1} max={max} />
+            {isLoading && (
+                <ChikaLoading />
+            )}
             <div className="flex flex-col items-center text-center justify-center gap-[50px] select-none leading-tight">
                 <div className="flex flex-col gap-[25px] bg-[linear-gradient(180deg,_#F90_0%,_#C45500_100%)] rounded-[45px] w-[377px] h-[391px] py-[30px] px-[33px] [box-shadow:0px_127px_36px_0px_rgba(196,85,0,0.01),0px_81px_33px_0px_rgba(196,85,0,0.05),0px_46px_27px_0px_rgba(196,85,0,0.18),0px_20px_20px_0px_rgba(196,85,0,0.31),0px_5px_11px_0px_rgba(196,85,0,0.36)]">
                     <h1 className="font-bold text-[24px] [text-shadow:0_0_16px_#C45500] text-[#FFFDF2] outline-text">
@@ -123,11 +150,12 @@ export default function PreAssessmentTest() {
                         <div className='flex flex-col items-center'>
                             <Image
                                 src={imgSrc}
-                                alt={"pusa"}
+                                alt={word}
                                 width={127}
                                 height={132}
                                 className="m-auto w-[127px] h-[132px] filter drop-shadow-[0px_0px_16px_rgba(196,85,0,0.35)]"
                                 priority
+                                loading='eager'
                             />
                             <div
                                 className={`relative flex items-center justify-center cursor-pointer group ${showTooltip ? 'show-tooltip' : ''}`}

@@ -16,7 +16,7 @@ export async function register(
   payload: RegisterPayload
 ): Promise<RegisterResponse> {
   const res = await fetch(
-    `${API}/auth/register`,
+    `/api/auth/register`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -52,7 +52,7 @@ export async function login(data: LoginPayload): Promise<LoginResponse> {
   form.append('username', data.username);
   form.append('password', data.password);
 
-  const res = await fetch(`${API}/auth/login`, {
+  const res = await fetch(`/api/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -87,7 +87,7 @@ export async function login(data: LoginPayload): Promise<LoginResponse> {
 export async function refreshToken(
   payload: RefreshPayload
 ): Promise<LoginResponse> {
-  const res = await fetch(`${API}/auth/refresh`, {
+  const res = await fetch(`/api/auth/refresh`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -111,7 +111,7 @@ export async function refreshToken(
 export async function verifyToken(): Promise<VerifyTokenResponse> {
   const accessToken = localStorage.getItem('access_token'); // or get it from a context/store
 
-  const res = await fetch(`${API}/auth/verify-token`, {
+  const res = await fetch(`/api/auth/verify-token`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${accessToken}`,
@@ -130,7 +130,7 @@ export async function isEmailExisting(
 ): Promise<IsEmailExistingResponse> {
   const params = new URLSearchParams({ email: query.email });
 
-  const res = await fetch(`${API}/auth/is_email_existing?${params.toString()}`, {
+  const res = await fetch(`/api/auth/is_email_existing?${params.toString()}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

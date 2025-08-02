@@ -12,7 +12,7 @@ const API = process.env.NEXT_PUBLIC_API_URL;
 export async function updateUser(payload: UpdateUserPayload): Promise<UpdateUserResponse> {
     const token = localStorage.getItem('access_token'); 
 
-    const res = await fetch(`${API}/users/me`, {
+    const res = await fetch(`/api/users/me`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ export async function updateUser(payload: UpdateUserPayload): Promise<UpdateUser
 
 
 export async function updateChild(child_id: string, payload: UpdateChildPayload): Promise<Child> {
-    const res = await fetch(`${API}/users/child/${child_id}`, {
+    const res = await fetch(`/api/users/child/${child_id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -54,7 +54,7 @@ export async function updateChild(child_id: string, payload: UpdateChildPayload)
 }
 
 export async function getChild(child_id: string): Promise<Child> {
-    const res = await fetch(`${API}/users/child/${child_id}`, {
+    const res = await fetch(`/api/users/child/${child_id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
     });
@@ -73,7 +73,7 @@ export async function getChild(child_id: string): Promise<Child> {
 
 export async function getUserChildren(user_id: string): Promise<Child[]> {
     const token = localStorage.getItem('access_token');
-    const res = await fetch(`${API}/users/children/${user_id}`, {
+    const res = await fetch(`/api/users/children/${user_id}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
 

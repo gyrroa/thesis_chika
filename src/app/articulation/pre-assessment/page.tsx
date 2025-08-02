@@ -31,7 +31,7 @@ export default function Assessment() {
     const { data: preAssessment } = usePreAssessment();
 
     // pick the first item (or nothing)
-    const [idx, setIdx] = useState(22);
+    const [idx, setIdx] = useState(0);
     const item = preAssessment?.items?.[idx];
     const imgSrc = item?.word.image_url ?? '';
     const audioSrc = item?.word.audio_url ?? '';

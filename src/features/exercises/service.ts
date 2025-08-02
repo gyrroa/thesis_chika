@@ -8,7 +8,7 @@ export async function getPreAssessmentItems(
   child_id: string
 ): Promise<PreAssessmentResponse> {
   const res = await fetch(
-    `/api/exercises/pre-assessment/${child_id}/items`,
+    `${API}/exercises/pre-assessment/${child_id}/items`,
     { headers: { 'Content-Type': 'application/json' } }
   );
   const body = await res.json();
@@ -20,7 +20,7 @@ export async function getPreAssessmentItems(
 
 export async function getSoundMastery(child_id: string): Promise<SoundMastery[]> {
   const res = await fetch(
-    `/api/exercises/child/${child_id}/sound-mastery`,
+    `${API}/exercises/child/${child_id}/sound-mastery`,
     { headers: { 'Content-Type': 'application/json' } }
   );
   const body = await res.json();
@@ -43,7 +43,7 @@ export async function createSoundPractice(
   params.append('max_items', max_items.toString());
 
   const res = await fetch(
-    `/api/exercises/children/${child_id}/practice-sound?${params.toString()}`,
+    `${API}/exercises/children/${child_id}/practice-sound?${params.toString()}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -72,7 +72,7 @@ export async function attemptV2(
   const form = new FormData();
   form.append('file', file);
 
-  const res = await fetch(`/api/exercises/attempt_v2?${params}`, {
+  const res = await fetch(`${API}/exercises/attempt_v2?${params}`, {
     method: 'POST',
     body: form,
   });

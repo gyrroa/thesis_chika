@@ -223,10 +223,11 @@ export default function GeneralAssessment() {
     // —— 8) dynamic font sizing
     const fontSize = `${Math.max(20, 32 - (word.length - 4) * 1.5)}px`;
 
-
+    const [backModal, setBackModal] = useState(false);
+    
     return (
         <main className="flex flex-col items-center justify-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat gap-[8px]">
-            <Header />
+            <Header showBackButton={true} onBackClick={() => setBackModal(true)} />
             {/* Progress Bar */}
             <ProgressBar value={idx + 1} max={max} />
             {isLoading && (
@@ -234,6 +235,29 @@ export default function GeneralAssessment() {
             )}
             {isPending &&
                 <ChikaListening />
+            }
+            {backModal &&
+                <div className='absolute h-screen w-screen bg-black/50 items-center justify-center flex z-10'>
+                    <div className='flex flex-col gap-[20px] rounded-[45px] bg-[#FFFDF2] [box-shadow:0_-1px_24.1px_0_rgba(196,85,0,0.3)] p-[30px] z-50 items-center'>
+                        <Image
+                            src={`/chika/sad.png`}
+                            alt={`chika`}
+                            width={240}
+                            height={240}
+                            priority
+                        />
+                        {/* Text */}
+                        <div className='w-[311px] text-center flex flex-col gap-[10px]'>
+                            <h1 className='text-[#C45500] text-[32px] font-bold [text-shadow:0_0_4px_rgba(255,153,0,0.35)]'>{"Leaving already?"}</h1>
+                            <p className='text-[#FF9900] text-[20px] font-medium'>{"It’s okay! Your progress is saved. But this round starts over."}</p>
+                            <p className='text-[#FF9900] text-[20px] font-medium'>{"Still want to go back?"}</p>
+                        </div>
+                        <div className='flex w-full gap-[20px]'>
+                            <Button variant={"custom"} onClick={() => setBackModal(false)}>{"CANCEL"}</Button>
+                            <Button onClick={() => router.back()}>{"YES"}</Button>
+                        </div>
+                    </div>
+                </div>
             }
             {/* Correct Result */}
             {correct &&

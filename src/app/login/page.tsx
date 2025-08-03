@@ -117,7 +117,7 @@ export default function Login() {
                                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                                     required
                                     className="h-11 w-full border border-[#F90] placeholder-[rgba(255,153,0,0.5)] pl-[51] pr-[45px] py-2 rounded-[25px]"
-                                    placeholder='Create a Password'
+                                    placeholder='Your Password'
                                 />
                             </div>
 

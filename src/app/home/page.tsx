@@ -106,6 +106,7 @@ export default function Home() {
             // sort descending
             .sort((a, b) => a.mastery_score - b.mastery_score);
     }, [data]);
+    const isCanSayEmpty = filteredSortedSoundsCanSay.length === 0;
 
     return (
         <main className="flex flex-col items-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat gap-[8px] px-[33px] pt-[80px] sm:justify-center">
@@ -184,7 +185,9 @@ export default function Home() {
                 </div>
                 {/* Sounds i can say*/}
                 <div className="flex flex-col gap-[13px] relative">
-                    <h1 className="text-[#C45500] text-[16px] font-bold">{"SOUNDS I CAN SAY"}</h1>
+                    {!isCanSayEmpty &&
+                        <h1 className="text-[#C45500] text-[16px] font-bold">{"SOUNDS I CAN SAY"}</h1>
+                    }
 
                     {/* Wrapper to contain scroll area + gradient overlays */}
                     <div className="relative">

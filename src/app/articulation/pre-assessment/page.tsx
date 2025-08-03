@@ -222,6 +222,40 @@ export default function PreAssessment() {
     const fontSize = `${Math.max(20, 32 - (word.length - 4) * 1.5)}px`;
 
     const [backModal, setBackModal] = useState(false);
+
+    // SFX
+    const playSoundFX = (src: string) => {
+        const audio = new Audio(src);
+        audio.play().catch((err) => {
+            console.error('Audio playback failed:', err);
+        });
+    };
+
+    useEffect(() => {
+        if (isPending) {
+            playSoundFX("/sfx/HOLD ON.ogg");
+        }
+    }, [isPending]);
+
+
+    useEffect(() => {
+        if (correct) {
+            playSoundFX("/sfx/GREAT JOB.ogg");
+        }
+    }, [correct]);
+
+    useEffect(() => {
+        if (incorrect) {
+            playSoundFX("/sfx/ERROR.ogg");
+        }
+    }, [incorrect]);
+
+    useEffect(() => {
+        if (incorrectStress) {
+            playSoundFX("/sfx/ALMOST THERE.ogg");
+        }
+    }, [incorrectStress]);
+
     return (
         <main className="flex flex-col items-center justify-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat gap-[8px]">
             <Header showBackButton={true} onBackClick={() => setBackModal(true)} />
@@ -412,7 +446,7 @@ export default function PreAssessment() {
                     {/* outer circle: either static 65×65, or animating pulse */}
                     <div
                         className={
-                            `flex items-center justify-center rounded-full overflow-visible ` +
+                            `flex items-center justify-center rounded-full overflow-visible transition-colors duration-300 ease-in-out ` +
                             (isPulsing
                                 ? 'pulse-outer bg-[#a3da9f]'
                                 : `w-[116px] h-[116px] ${errorMic ? "bg-[#f79f7c]" : "bg-[#fcd497]"}`)
@@ -421,7 +455,7 @@ export default function PreAssessment() {
                         {/* middle circle */}
                         <div
                             className={
-                                `flex items-center justify-center rounded-full overflow-visible ` +
+                                `flex items-center justify-center rounded-full overflow-visible transition-colors duration-300 ease-in-out ` +
                                 (isPulsing
                                     ? 'pulse-middle bg-[#6bcf79]'
                                     : `w-[95px] h-[95px] ${errorMic ? "bg-[#fc815b]" : "bg-[#ffc363]"}`)

@@ -164,7 +164,7 @@ export default function RegisterChild() {
                             </div>
 
                             <div className="flex flex-col gap-[20px]">
-                                <Button variant="default" type="submit">
+                                <Button variant="default" type="submit" soundType={"confirm"}>
                                     {'REGISTER CHILD'}
                                 </Button>
                             </div>

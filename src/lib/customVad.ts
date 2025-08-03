@@ -14,6 +14,7 @@ export function useVad(
 ) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const speakingRef = useRef(false);
+  const speechDetectedRef = useRef(false);          
   const audioCtxRef = useRef<AudioContext | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const procRef = useRef<ScriptProcessorNode | null>(null);
@@ -48,43 +49,35 @@ export function useVad(
 
   const startVad = useCallback(
     async (stream: MediaStream) => {
-      if (audioCtxRef.current) {
-        // already running
-        return;
-      }
+      if (audioCtxRef.current) return;
+
+      speechDetectedRef.current = false;              // <— reset on each start
 
       const audioCtx = new AudioContext();
       audioCtxRef.current = audioCtx;
-
       const source = audioCtx.createMediaStreamSource(stream);
       sourceRef.current = source;
-
       const proc = audioCtx.createScriptProcessor(2048, 1, 1);
       procRef.current = proc;
 
       proc.onaudioprocess = (ev) => {
         const data = ev.inputBuffer.getChannelData(0);
         let sum = 0;
-        for (let i = 0; i < data.length; i++) {
-          sum += data[i] ** 2;
-        }
+        for (let i = 0; i < data.length; i++) sum += data[i] ** 2;
         const rms = Math.sqrt(sum / data.length);
 
         if (rms > threshold) {
-          // we just went above threshold
+          speechDetectedRef.current = true;           // <— mark that we saw speech
           if (!speakingRef.current) {
             speakingRef.current = true;
             setIsSpeaking(true);
           }
-          // clear any silence timer
           if (silenceTimerRef.current) {
             clearTimeout(silenceTimerRef.current);
             silenceTimerRef.current = null;
           }
         } else if (speakingRef.current && !silenceTimerRef.current) {
-          // we dropped below threshold *and* were speaking: start silence countdown
           silenceTimerRef.current = window.setTimeout(() => {
-            // after `silenceDelay` of low RMS, fire onStop
             speakingRef.current = false;
             setIsSpeaking(false);
             stopVad();
@@ -99,12 +92,8 @@ export function useVad(
     [threshold, silenceDelay, onStop, stopVad]
   );
 
-  // Clean up if component unmounts
-  useEffect(() => {
-    return () => {
-      stopVad();
-    };
-  }, [stopVad]);
+  useEffect(() => () => stopVad(), [stopVad]);
 
-  return { startVad, stopVad, isSpeaking };
+  return { startVad, stopVad, isSpeaking, speechDetectedRef };  // <— expose it
 }
+

@@ -131,7 +131,7 @@ export default function RegisterUser() {
                                 </div>
 
                             </div>
-                            <Button variant="default" type='submit'>
+                            <Button variant="default" type='submit' soundType={"confirm"}>
                                 {"SIGN UP"}
                             </Button>
 

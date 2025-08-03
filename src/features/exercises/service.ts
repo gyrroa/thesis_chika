@@ -1,4 +1,6 @@
 //exercises/service.ts
+import { refreshToken } from '../auth/service';
+import { LoginResponse } from '../auth/types';
 import type { AttemptV2Response, AttemptV2Variables, CustomAssessmentResponse, CustomAssessmentVariables, PracticeSoundVariables, PreAssessmentResponse, SoundPracticeResponse, UnansweredPreassessmentResponse } from './types';
 import type { SoundMastery } from './types';
 
@@ -126,29 +128,75 @@ export async function attemptV2(
     attempt_type,
   });
 
-  // build form-data
   const form = new FormData();
   form.append('file', file);
 
-  const accessToken = localStorage.getItem('access_token') ?? '';
+  // helper to actually do the fetch given the current access token
+  const doFetch = async (accessToken: string) => {
+    const res = await fetch(`${API}/exercises/attempt_v3?${params}`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      body: form,
+    });
+
+    // if token is expired or invalid, we'll get a 401
+    if (res.status === 401) {
+      throw new Error('UNAUTHORIZED');
+    }
+
+    const body = await res.json();
+    if (!res.ok) {
+      throw new Error((body as any).detail || res.statusText);
+    }
+    return body as AttemptV2Response;
+  };
+
+  // 1) grab the token
+  let accessToken = localStorage.getItem('access_token') ?? '';
   if (!accessToken) {
     throw new Error('No access token—user must be logged in');
   }
 
-  const res = await fetch(`${API}/exercises/attempt_v3?${params}`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${accessToken}`,
-    },
-    body: form,
-  });
+  try {
+    // 2) try the upload
+    return await doFetch(accessToken);
+  } catch (err) {
+    // only handle our "UNAUTHORIZED" marker
+    if (err instanceof Error && err.message === 'UNAUTHORIZED') {
+      // 3) attempt a refresh
+      const refreshTokenStr = localStorage.getItem('refresh_token') ?? '';
+      if (!refreshTokenStr) {
+        throw new Error('Session expired—please log in again.');
+      }
 
-  const body = await res.json();
-  if (!res.ok) {
-    throw new Error(body.detail || res.statusText);
+      let loginResp: LoginResponse;
+      try {
+        loginResp = await refreshToken({ refresh_token: refreshTokenStr });
+      } catch (refreshErr) {
+        // bubbling validation or other errors
+        throw new Error(
+          refreshErr instanceof Error
+            ? refreshErr.message
+            : 'Could not refresh session—please log in again.'
+        );
+      }
+
+      // 4) store the new tokens
+      localStorage.setItem('access_token', loginResp.access_token);
+      if (loginResp.refresh_token) {
+        localStorage.setItem('refresh_token', loginResp.refresh_token);
+      }
+
+      // 5) retry the original request with the fresh token
+      return await doFetch(loginResp.access_token);
+    }
+
+    // any other error: re-throw
+    throw err;
   }
-  return body as AttemptV2Response;
 }
 
 /**

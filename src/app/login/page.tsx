@@ -123,13 +123,13 @@ export default function Login() {
 
                         </div>
 
-                        <Button variant="default" type='submit'>
+                        <Button variant="default" type='submit' soundType={"confirm"}>
                             {"LOGIN"}
                         </Button>
 
                         <div className='flex flex-col gap-[17px]'>
                             <h1>{"Or continue with"}</h1>
-                            <div className='flex gap-[19px] items-center justify-center'>
+                            <div className='flex gap-[19px] it  ems-center justify-center'>
                                 <div onClick={() => alert(alertMessage)} className="w-14 h-14 rounded-full border border-[#C45500] items-center flex p-[15px] cursor-pointer active:brightness-90 hover:scale-105 active:scale-100 duration-100 shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)]">
                                     <Image
                                         src="/create-account/google.svg"

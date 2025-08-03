@@ -98,7 +98,7 @@ export default function Assessment() {
     }, []);  // no deps → stable
 
     // const { startVad, stopVad, isSpeaking } = useVad(
-    const { startVad, stopVad } = useVad(
+    const { startVad, stopVad, speechDetectedRef } = useVad(
         endRecording,
         { threshold: 0.02, silenceDelay: 1200 }
     );
@@ -166,14 +166,19 @@ export default function Assessment() {
         // error,
     } = useSubmitAttempt();
     // —— 6) mic handler
+    const [errorMic, setErrorMic] = useState(false);
+    // mic handler
     const handleMic = async () => {
         await wavReady.current;
-
+        setErrorMic(false);
         if (!isRecording) {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const recorder = new EMR(stream, { mimeType: 'audio/wav' });
             mediaRef.current = recorder;
             chunks.current = [];
+
+            // reset speech flag
+            speechDetectedRef.current = false;
 
             recorder.ondataavailable = (e) => {
                 if (e.data.size) chunks.current.push(e.data);
@@ -184,6 +189,12 @@ export default function Assessment() {
                 stopVad();
                 setIsRecording(false);
                 setIsPulsing(false);
+
+                // <-- new guard -->
+                if (!speechDetectedRef.current) {
+                    setErrorMic(true);
+                    return;
+                }
 
                 const wavBlob = new Blob(chunks.current, { type: 'audio/wav' });
                 const wavFile = new File([wavBlob], `${word}.wav`, { type: 'audio/wav' });
@@ -198,9 +209,7 @@ export default function Assessment() {
                         payload: { file: wavFile },
                     },
                     {
-                        onSuccess: (resp) => {
-                            handleResult(resp);
-                        },
+                        onSuccess: (resp) => handleResult(resp),
                         onError: (err) => console.error(err),
                     }
                 );
@@ -260,7 +269,7 @@ export default function Assessment() {
                         </div>
                         <div className='flex w-full gap-[20px]'>
                             <Button variant={"custom"} onClick={() => setBackModal(false)}>{"CANCEL"}</Button>
-                            <Button onClick={() => router.back()}>{"YES"}</Button>
+                            <Button onClick={() => router.back()} soundType={"confirm"} >{"YES"}</Button>
                         </div>
                     </div>
                 </div>
@@ -424,7 +433,7 @@ export default function Assessment() {
                             `flex items-center justify-center rounded-full overflow-visible ` +
                             (isPulsing
                                 ? 'pulse-outer bg-[#a3da9f]'
-                                : 'w-[116px] h-[116px] bg-[#fcd497]')
+                                : `w-[116px] h-[116px] ${errorMic ? "bg-[#f79f7c]" : "bg-[#fcd497]"}`)
                         }
                     >
                         {/* middle circle */}
@@ -433,7 +442,7 @@ export default function Assessment() {
                                 `flex items-center justify-center rounded-full overflow-visible ` +
                                 (isPulsing
                                     ? 'pulse-middle bg-[#6bcf79]'
-                                    : 'w-[95px] h-[95px] bg-[#ffc363]')
+                                    : `w-[95px] h-[95px] ${errorMic ? "bg-[#fc815b]" : "bg-[#ffc363]"}`)
                             }
                         >
 
@@ -442,7 +451,7 @@ export default function Assessment() {
                     {/* Inner circle stays fixed */}
                     <div className="absolute flex items-center justify-center w-[65px] h-[65px] rounded-full bg-[#F9F9F9] shadow-md">
                         {/* Microphone Icon */}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill={isPulsing ? '#00B527' : '#FF9900'} >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill={errorMic ? '#FF3300' : isPulsing ? '#00B527' : '#FF9900'} >
                             <g clipPath="url(#clip0_468_5155)">
                                 <path d="M14.8069 21.068C17.7532 21.068 20.1503 18.6709 20.1503 15.7246V5.91712C20.1503 2.97075 17.7532 0.57373 14.8069 0.57373C11.8605 0.57373 9.46349 2.97075 9.46349 5.91712V15.7246C9.46349 18.6709 11.8605 21.068 14.8069 21.068ZM14.8069 1.71062C17.1264 1.71062 19.0134 3.59759 19.0134 5.91712V10.615H10.6004V5.91712C10.6004 3.59759 12.4873 1.71062 14.8069 1.71062ZM10.6004 11.7519H19.0134V15.7246C19.0134 18.0441 17.1264 19.9311 14.8069 19.9311C12.4873 19.9311 10.6004 18.0441 10.6004 15.7246V11.7519Z" />
                                 <path d="M13.4237 8.03801H16.19C16.504 8.03801 16.7584 7.78355 16.7584 7.46957C16.7584 7.15559 16.504 6.90112 16.19 6.90112H13.4237C13.1097 6.90112 12.8553 7.15559 12.8553 7.46957C12.8553 7.78355 13.1097 8.03801 13.4237 8.03801Z" />

@@ -9,54 +9,70 @@ import { useVad } from '@/lib/customVad';
 // Extendable MediaRecorder with WAV encoder
 import { MediaRecorder as EMR, IMediaRecorder, register } from 'extendable-media-recorder';
 import { connect as wavConnect } from 'extendable-media-recorder-wav-encoder';
-import { usePreAssessment } from '@/features/exercises/context/PreAssessmentContext';
-import { useSubmitAttempt } from '@/features/exercises/hooks';
-import ChikaListening from '@/components/animation/chika-listening';
-import { useQueryClient } from '@tanstack/react-query';
-import { User } from '@/features/auth/types';
-import { useUserChildren } from '@/features/users/hooks';
-import { AttemptV2Response } from '@/features/exercises/types';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
+import ChikaListening from '@/components/animation/chika-listening';
+import { useSubmitAttempt } from '@/features/exercises/hooks';
+import { AttemptV2Response } from '@/features/exercises/types';
+import { useQueryClient } from '@tanstack/react-query';
+import { useUserChildren } from '@/features/users/hooks';
+import { User } from '@/features/auth/types';
 import ChikaLoading from '@/components/animation/chika-loading';
+import { useCustomAssessmentContext } from '@/features/exercises/context/CustomAssessmentContext';
 
-export default function PreAssessment() {
+export default function GeneralAssessment() {
     const router = useRouter();
     // child id
     const qc = useQueryClient();
     const user = qc.getQueryData<User>(['auth', 'user']);
     const { data: children } = useUserChildren(user?.id ?? '');
     const childId = children?.[0]?.id ?? '';
-
-    // get your pre-assessment state from context
-    const { data: preAssessment, isLoading } = usePreAssessment();
-
-    // pick the first item (or nothing)
-    const [idx, setIdx] = useState(0);
-    const item = preAssessment?.items?.[idx];
-    const imgSrc = item?.word.image_url ?? '';
-    const audioSrc = item?.word.audio_url ?? '';
-    const word = item?.word.text ?? '';
-    const stressedWord = item?.word.stress ?? '';
-    const displayStressedWord = stressedWord.replace(/-/g, '');
-    const syll = item?.word.syllables ?? '';
-    const transl = item?.word.translation ?? '';
-    const max = preAssessment?.items_count ?? 1;
-    const [attemptedWord, setAttemptedWord] = useState<string>("");
-    const [attemptedStressedWord, setAttemptedStressedWord] = useState<string>("");
+    // —— 1) get your pre-assessment state from context
     // modals
     const [correct, setCorrect] = useState(false);
     const [incorrect, setIncorrect] = useState(false);
     const [incorrectStress, setIncorrectStress] = useState(false);
     const [finished, setFinished] = useState(false);
 
-    // recorder refs & state
+    const max = 10;
+    const searchParams = useSearchParams();
+    const sound = searchParams.get('sound') ?? '';
+
+    const {
+        mutate,
+        data: assessment,
+        isLoading,
+        // isError,
+        // error,
+    } = useCustomAssessmentContext();
+
+    useEffect(() => {
+        if (!isLoading && !assessment) {
+            mutate({
+                max_items: max,
+            });
+        }
+    }, [mutate, max, isLoading, assessment]);
+
+    // —— 2) pick the first item (or nothing)
+    const [idx, setIdx] = useState(0);
+    const item = assessment?.items?.[idx];
+    const imgSrc = item?.word.image_url ?? 'logo.svg';
+    const audioSrc = item?.word.audio_url ?? '';
+    const word = item?.word.text ?? '';
+    const stressedWord = item?.word.stress ?? '';
+    const displayStressedWord = stressedWord.replace(/-/g, '');
+    const syll = item?.word.syllables ?? '';
+    const transl = item?.word.translation ?? '';
+    const [attemptedWord, setAttemptedWord] = useState<string>("");
+    const [attemptedStressedWord, setAttemptedStressedWord] = useState<string>("");
+    // —— 3) recorder refs & state
     const [isRecording, setIsRecording] = useState(false);
     const [isPulsing, setIsPulsing] = useState(false);
     const mediaRef = useRef<IMediaRecorder | null>(null);
     const chunks = useRef<Blob[]>([]);
 
-    // prepare WAV once
+    // —— 4) prepare WAV once
     const wavReady = useRef<Promise<void>>(Promise.resolve());
     useEffect(() => {
         wavReady.current = (async () => {
@@ -73,7 +89,7 @@ export default function PreAssessment() {
         })();
     }, []);
 
-    // VAD hook
+    // —— 5) VAD hook
     const endRecording = useCallback(() => {
         mediaRef.current?.stop();
         setIsRecording(false);
@@ -85,7 +101,6 @@ export default function PreAssessment() {
         endRecording,
         { threshold: 0.02, silenceDelay: 1200 }
     );
-
     // play word sound
     const playSound = () => {
         const audio = new Audio(audioSrc);
@@ -95,7 +110,7 @@ export default function PreAssessment() {
     };
     // play word sound
     const playNextSound = () => {
-        const audio = new Audio(preAssessment?.items?.[idx + 1]?.word.audio_url ?? "");
+        const audio = new Audio(assessment?.items?.[idx + 1]?.word.audio_url ?? "");
         audio.play().catch((err) => {
             console.error('Audio playback failed:', err);
         });
@@ -144,8 +159,7 @@ export default function PreAssessment() {
         // isError,
         // error,
     } = useSubmitAttempt();
-
-    // mic handler
+    // —— 6) mic handler
     const handleMic = async () => {
         await wavReady.current;
 
@@ -172,8 +186,8 @@ export default function PreAssessment() {
                     {
                         query: {
                             child_id: childId,
-                            assessment_item_id: item?.item ?? 0,
-                            attempt_type: 'static',
+                            assessment_item_id: item?.assessment_item_id ?? 0,
+                            attempt_type: 'dynamic',
                         },
                         payload: { file: wavFile },
                     },
@@ -198,7 +212,7 @@ export default function PreAssessment() {
         }
     };
 
-    // tooltip behavior
+    // —— 7) tooltip behavior
     const [showTooltip, setShowTooltip] = useState(false);
     useEffect(() => {
         if (!showTooltip) return;
@@ -206,8 +220,9 @@ export default function PreAssessment() {
         return () => clearTimeout(t);
     }, [showTooltip]);
 
-    // dynamic font sizing
+    // —— 8) dynamic font sizing
     const fontSize = `${Math.max(20, 32 - (word.length - 4) * 1.5)}px`;
+
 
     return (
         <main className="flex flex-col items-center justify-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat gap-[8px]">

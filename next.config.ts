@@ -9,7 +9,6 @@ const nextConfig: NextConfig = {
   },
 
   // Remove Webpack config (Turbopack ignores it anyway)
-
   images: {
     domains: ['kjebfsttsciscbasipqs.supabase.co'],
   },

@@ -20,7 +20,7 @@ import { useUserChildren } from '@/features/users/hooks';
 import { User } from '@/features/auth/types';
 import ChikaLoading from '@/components/animation/chika-loading';
 
-export default function Test() {
+export default function Assessment() {
     const router = useRouter();
     // child id
     const qc = useQueryClient();

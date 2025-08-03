@@ -56,7 +56,33 @@ export interface SoundPracticeResponse {
     order: number;
   }>;
 }
+export interface CustomAssessmentVariables {
+  difficultry_threshold?: number;
+  max_items?: number;
+  nickname?: string;
+}
 
+export interface CustomAssessmentResponse {
+  assessment_id: number;
+  assessment_name: string;
+  total_items: number;
+  due_items: number;
+  items: Array<{
+    assessment_item_id: number;
+    word: {
+      text: string;
+      stress: string;
+      syllables: string;
+      translation: string;
+      audio_url: string;
+      image_url: string;
+    };
+    sounds: string[];
+    difficulty: number;
+    due_date: string;    // ISO timestamp
+    order: number;
+  }>;
+}
 /**
  * Variables needed to attempt V2.
  */

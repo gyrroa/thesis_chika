@@ -6,7 +6,7 @@ import { Header } from '@/components/ui/header';
 import { useRouter } from 'next/navigation';
 import { DialogBox } from '@/components/ui/dialog-box';
 
-export default function Home() {
+export default function How() {
     const [showDialog, setShowDialog] = useState(false);
     const router = useRouter();
     const handleStart = () => {

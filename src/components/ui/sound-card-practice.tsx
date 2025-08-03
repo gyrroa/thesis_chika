@@ -11,8 +11,8 @@ export interface PracticeCardProps {
     /** Title text above the progress line */
     sound: string;
     /** Progress text */
-    int: number;
-    max: number;
+    int?: number;
+    max?: number;
     mastery: number;
     /** Callback when the user clicks "START PRACTICE" */
     onPractice: () => void;
@@ -64,7 +64,7 @@ export const SoundCardPractice: React.FC<PracticeCardProps> = ({
     return (
         <div
             className={[
-                'flex w-full items-start justify-start cursor-pointer border-2 border-[#F90] rounded-[30px] py-[25px] px-[30px] gap-[25px] bg-[#FFFDF2] shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)] active:scale-95 transition-all duration-200'
+                'flex w-full items-center justify-center cursor-pointer border-2 border-[#F90] rounded-[30px] py-[25px] px-[30px] gap-[25px] bg-[#FFFDF2] shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)] active:scale-95 transition-all duration-200'
             ].join(' ')}
             onClick={onPractice}
         >
@@ -79,12 +79,13 @@ export const SoundCardPractice: React.FC<PracticeCardProps> = ({
 
             <div className="inline-flex flex-col gap-2 items-start justify-start w-auto">
                 <div className="text-[#C45500]">
-                    <h1 className="text-[16px] font-bold leading-tight uppercase">{"THE /"}{sound}{"/ SOUND"}</h1>
-                    <h1 className="text-[12px] font-medium leading-tight whitespace-nowrap">{"Progress: "}
+                    <h1 className="text-[16px] font-bold leading-tight uppercase">{"THE "}<span className='text-[#F90]'>{"/"}{sound}{"/"}</span>{" SOUND"}</h1>
+                    {int != null && max != null && <h1 className="text-[12px] font-medium leading-tight whitespace-nowrap">{"Progress: "}
                         <span className='text-[15px] font-bold bg-gradient-to-b from-[#FF9900] to-[#C45500] bg-clip-text text-transparent outline-text-2'>{int}</span>
                         {" out of "}
                         <span className='text-[15px] font-bold bg-gradient-to-b from-[#FF9900] to-[#C45500] bg-clip-text text-transparent outline-text-2'>{max}</span>
-                        {" words"}</h1>
+                        {" words"}
+                    </h1>}
                     <div className='flex gap-[5px]'>
                         <p className="text-[12px] font-medium leading-tight">{"Mastery: "}</p>
                         {Array.from({ length: 5 }, (_, i) =>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Header } from '@/components/ui/header';
 import { SoundCardSayButton } from '@/components/ui/sound-card-say';
 import { SoundCardPractice } from '@/components/ui/sound-card-practice';
@@ -39,11 +39,6 @@ export default function Home() {
 
     const childId = children?.[0]?.id ?? '';
     const { data } = useSoundMastery(childId);
-    useEffect(() => {
-        if (!data) {
-            console.log('[✅ SoundMastery]', data);
-        }
-    }, [data]);
     const averageMastery =
         data && data.length > 0
             ? data.reduce((sum, m) => sum + m.mastery_score, 0) / data.length
@@ -82,6 +77,32 @@ export default function Home() {
     // 2) convert each 20% into one star (ceil so 1–20 → 1 star, …, 81–100 → 5 stars)
     const starCount = Math.min(5, Math.ceil(pct / 20));
 
+    const filteredSortedSounds = useMemo(() => {
+        if (!data) return [];
+
+        return [...data]
+            .filter(m => m.mastery_score < 80)
+            .sort((a, b) => {
+                const masteryDiff = a.mastery_score - b.mastery_score;
+                if (masteryDiff !== 0) {
+                    return masteryDiff;
+                }
+
+                const progressA = a.reviewed_words / a.total_words;
+                const progressB = b.reviewed_words / b.total_words;
+                return progressB - progressA;
+            });
+    }, [data]);
+
+    const filteredSortedSoundsCanSay = useMemo(() => {
+        if (!data) return [];
+        return [...data]
+            // only include mastery < 80
+            .filter(m => m.mastery_score >= 80)
+            // sort descending
+            .sort((a, b) => a.mastery_score - b.mastery_score);
+    }, [data]);
+
     return (
         <main className="flex flex-col items-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat gap-[8px] px-[33px] pt-[80px] sm:justify-center">
             <Header showBackButton={false} />
@@ -110,7 +131,9 @@ export default function Home() {
                 <div className='flex flex-col justify-between font-bold gap-[13px]'>
                     <h1 className='text-[#C45500] text-[16px]'>{"SOUNDS TO PRACTICE"}</h1>
                     {/* All Sounds */}
-                    <div className={'flex w-full items-start justify-start active:scale-95 transition-all duration-200 border-2 border-[#F90] rounded-[30px] py-[25px] px-[30px] gap-[25px] bg-[#FFFDF2] shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)]'}>
+                    <button
+                        onClick={() => router.push(`/articulation/general-assessment`)}
+                        className={'flex w-full items-start justify-start cursor-pointer active:scale-95 transition-all duration-200 border-2 border-[#F90] rounded-[30px] py-[25px] px-[30px] gap-[25px] bg-[#FFFDF2] shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)]'}>
                         <div className="flex flex-col gap-2 items-center justify-center w-full">
                             <div className="flex flex-col text-[#C45500] w-full whitespace-nowrap text-center items-center">
                                 <h1 className="text-[16px] font-bold leading-tight">{"ALL SOUNDS"}</h1>
@@ -122,7 +145,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </button>
                     <svg
                         className="w-full h-[1px]"
                         viewBox="0 0 306 1"
@@ -141,7 +164,7 @@ export default function Home() {
                         />
                     </svg>
                     {/* Sound Cards */}
-                    {data?.map((m) => (
+                    {filteredSortedSounds.map(m => (
                         <SoundCardPractice
                             key={m.sound}
                             src="/TEMP.svg"
@@ -150,7 +173,9 @@ export default function Home() {
                             int={m.reviewed_words}
                             max={m.total_words}
                             mastery={m.mastery_score}
-                            onPractice={() => router.push(`/articulation/test?mode=test&sound=${m.sound}`)}
+                            onPractice={() =>
+                                router.push(`/articulation/assessment?sound=${m.sound}`)
+                            }
                         />
                     ))}
                 </div>
@@ -171,38 +196,17 @@ export default function Home() {
                             ref={scrollRef}
                             className="flex-nowrap flex gap-3 overflow-x-auto scroll-smooth snap-x snap-mandatory p-2 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
                         >
-                            <SoundCardSayButton
-                                src="/TEMP.svg"
-                                alt="K sound icon"
-                                label1="/k/"
-                                label2="Sound"
-                                href="/home"
-                            />
-                            <SoundCardSayButton
-                                src="/TEMP.svg"
-                                alt="K sound icon"
-                                label1="/D/"
-                                label2="Sound"
-                                href="/home"
-                            /><SoundCardSayButton
-                                src="/TEMP.svg"
-                                alt="K sound icon"
-                                label1="/K/"
-                                label2="Sound"
-                                href="/home"
-                            /><SoundCardSayButton
-                                src="/TEMP.svg"
-                                alt="K sound icon"
-                                label1="/K/"
-                                label2="Sound"
-                                href="/home"
-                            /><SoundCardSayButton
-                                src="/TEMP.svg"
-                                alt="K sound icon"
-                                label1="/K/"
-                                label2="Sound"
-                                href="/home"
-                            />
+                            {filteredSortedSoundsCanSay.map(m => (
+                                <SoundCardSayButton
+                                    key={m.sound}
+                                    src="/TEMP.svg"
+                                    alt="sound icon"
+                                    label1={m.sound}
+                                    onPractice={() =>
+                                        router.push(`/articulation/assessment?sound=${m.sound}`)
+                                    }
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 //exercises/service.ts
-import type { AttemptV2Response, AttemptV2Variables, PracticeSoundVariables, PreAssessmentResponse, SoundPracticeResponse } from './types';
+import type { AttemptV2Response, AttemptV2Variables, CustomAssessmentResponse, CustomAssessmentVariables, PracticeSoundVariables, PreAssessmentResponse, SoundPracticeResponse } from './types';
 import type { SoundMastery } from './types';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
@@ -54,6 +54,38 @@ export async function createSoundPractice(
     throw new Error(body.detail || res.statusText);
   }
   return body as SoundPracticeResponse;
+}
+/**
+ * POST /exercises/children/{child_id}/custom-assessment
+ */
+export async function createCustomAssessment(
+  child_id: string,
+  { difficultry_threshold, max_items, nickname }: CustomAssessmentVariables
+): Promise<CustomAssessmentResponse> {
+  const params = new URLSearchParams();
+  if (difficultry_threshold != null) {
+    params.append('difficultry_threshold', difficultry_threshold.toString());
+  }
+  if (max_items != null) {
+    params.append('max_items', max_items.toString());
+  }
+  if (nickname) {
+    params.append('nickname', nickname);
+  }
+
+  const res = await fetch(
+    `${API}/exercises/children/${child_id}/custom-assessment?${params.toString()}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    }
+  );
+
+  const body = await res.json();
+  if (!res.ok) {
+    throw new Error(body.detail || res.statusText);
+  }
+  return body as CustomAssessmentResponse;
 }
 /**
  * POST multipart/form-data to /exercises/attempt_v2

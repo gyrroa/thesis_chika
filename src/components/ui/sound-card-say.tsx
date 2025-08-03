@@ -11,24 +11,21 @@ export interface CardButtonProps {
     alt?: string
     /** text shown under the image */
     label1: string
-    /** text shown under the image */
-    label2: string
     /** link/href for the button */
-    href: string
+    onPractice: () => void;
 }
 
 export function SoundCardSayButton({
     src,
     alt = '',
     label1,
-    label2,
-    href,
+    onPractice,
 }: CardButtonProps) {
     return (
         <Button
             variant="card"
-            href={href}
             className="flex flex-col py-[20px] h-fit w-fit gap-[5px]"
+            onClick={onPractice}
         >
             <Image
                 src={src}
@@ -38,7 +35,7 @@ export function SoundCardSayButton({
                 className="m-auto"
                 priority
             />
-            <p className='text-[14px] font-bold'><span className='text-[#C45500]'>{label1}</span>{" " + label2}</p>
+            <p className='text-[#C45500] text-[14px] font-bold uppercase'><span className='text-[#F90] '>{`/${label1}/`}</span>{" Sound"}</p>
         </Button>
     )
 }

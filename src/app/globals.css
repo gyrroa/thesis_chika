@@ -16,23 +16,29 @@ input[type="password"]::-webkit-inner-spin-button {
 }
 
 @keyframes outerPulse {
-  0%, 100% {
-    width: 65px; 
+
+  0%,
+  100% {
+    width: 65px;
     height: 65px;
   }
+
   50% {
-    width: 116px; 
+    width: 116px;
     height: 116px;
   }
 }
 
 @keyframes middlePulse {
-  0%, 100% {
-    width: 65px; 
+
+  0%,
+  100% {
+    width: 65px;
     height: 65px;
   }
+
   50% {
-    width: 95px; 
+    width: 95px;
     height: 95px;
   }
 }
@@ -63,13 +69,16 @@ input[type="password"] {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 1px; /* thickness of the underline */
-  background-image: repeating-linear-gradient(
-    to right,
-    #F90 0 4px,        /* Dash: from 0 to 8px */
-    transparent 4px 12px  /* Gap: from 8px to 16px */
-  );
+  height: 1px;
+  /* thickness of the underline */
+  background-image: repeating-linear-gradient(to right,
+      #F90 0 4px,
+      /* Dash: from 0 to 8px */
+      transparent 4px 12px
+      /* Gap: from 8px to 16px */
+    );
 }
+
 /* Root */
 :root {
   font-family: 'Quicksand';
@@ -208,4 +217,77 @@ img {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes sound-wave {
+
+  0%,
+  100% {
+    height: 4px;
+  }
+
+  /* was 8px */
+  50% {
+    height: 12px;
+  }
+
+  /* was 24px */
+}
+
+.sound-wave span {
+  display: inline-block;
+  width: 3px;
+  /* optionally slimmer */
+  margin: 0 1px;
+  /* tighter spacing */
+  background-color: #FF9900;
+  animation: sound-wave 0.8s infinite ease-in-out;
+  transition: height 0.3s ease-in-out;
+}
+
+.sound-wave span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.sound-wave span:nth-child(2) {
+  animation-delay: 0.266s;
+}
+
+.sound-wave span:nth-child(3) {
+  animation-delay: 0.533s;
+}
+
+/* fade between icon & wave */
+.sound-container {
+  position: relative;
+  width: 35px;
+  height: 35px;
+}
+
+.sound-container>* {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.sound-container .icon {
+  opacity: 1;
+}
+
+.sound-container.playing .icon {
+  opacity: 0;
+}
+
+.sound-container .wave {
+  opacity: 0;
+}
+
+.sound-container.playing .wave {
+  opacity: 1;
 }

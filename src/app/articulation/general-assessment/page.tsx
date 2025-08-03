@@ -101,12 +101,13 @@ export default function GeneralAssessment() {
         endRecording,
         { threshold: 0.02, silenceDelay: 1200 }
     );
+    const [isPlaying, setIsPlaying] = useState(false);
     // play word sound
     const playSound = () => {
         const audio = new Audio(audioSrc);
-        audio.play().catch((err) => {
-            console.error('Audio playback failed:', err);
-        });
+        setIsPlaying(true);
+        audio.play();
+        audio.onended = () => setIsPlaying(false);
     };
     // play word sound
     const playNextSound = () => {
@@ -233,7 +234,7 @@ export default function GeneralAssessment() {
     const fontSize = `${Math.max(20, 32 - (word.length - 4) * 1.5)}px`;
 
     const [backModal, setBackModal] = useState(false);
-    
+
     // SFX
     const playSoundFX = (src: string) => {
         const audio = new Audio(src);
@@ -437,14 +438,22 @@ export default function GeneralAssessment() {
                                 <h1 className='text-[#C45500]'>{"]"}</h1>
                             </div>
                         </div>
-                        <div className='flex items-center justify-center rounded-b-[10px] bg-[#F2E7DC] h-[50px]'>
-                            {/* Play Sound */}
+                        <div className="flex items-center justify-center rounded-b-[10px] bg-[#F2E7DC] h-[50px]">
                             <div
                                 onClick={playSound}
-                                className='border-[#F90] bg-[#FFFDF2] border-2 w-[35px] h-[35px] pl-[3px] rounded-full flex items-center justify-center cursor-pointer'>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="14" viewBox="0 0 12 14" fill="none">
-                                    <path d="M12 7L0.75 13.4952V0.504809L12 7Z" fill="#FF9900" />
-                                </svg>
+                                className={`
+          border-[#F90] bg-[#FFFDF2] border-2 w-[35px] h-[35px] pl-[3px] rounded-full flex items-center justify-center cursor-pointer relative sound-container
+          ${isPlaying ? 'playing' : ''}
+        `}
+                            >
+                                <div className="icon ml-[2px]">
+                                    <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
+                                        <path d="M12 7L0.75 13.4952V0.504809L12 7Z" fill="#FF9900" />
+                                    </svg>
+                                </div>
+                                <div className="wave sound-wave">
+                                    <span></span><span></span><span></span>
+                                </div>
                             </div>
                         </div>
                     </div>

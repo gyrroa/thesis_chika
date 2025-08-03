@@ -1,7 +1,7 @@
 //exercises/hooks.ts
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { attemptV2, createCustomAssessment, createSoundPractice, getPreAssessmentItems, getSoundMastery } from './service';
-import type { AttemptV2Response, AttemptV2Variables, CustomAssessmentResponse, CustomAssessmentVariables, PracticeSoundVariables, PreAssessmentResponse, SoundMastery, SoundPracticeResponse } from './types';
+import { attemptV2, createCustomAssessment, createSoundPractice, getPreAssessmentItems, getSoundMastery, getUnansweredPreassessment } from './service';
+import type { AttemptV2Response, AttemptV2Variables, CustomAssessmentResponse, CustomAssessmentVariables, PracticeSoundVariables, PreAssessmentResponse, SoundMastery, SoundPracticeResponse, UnansweredPreassessmentResponse } from './types';
 
 /**
  * React Query hook for fetching pre-assessment items.
@@ -65,5 +65,18 @@ export function useSubmitAttempt() {
         ...query,
         file: payload.file,
       }),
+  });
+}
+/**
+ * React Query hook for fetching unanswered pre-assessment metadata.
+ * @param child_id The ID of the child to fetch for
+ */
+export function useUnansweredPreassessment(child_id: string) {
+  return useQuery<UnansweredPreassessmentResponse, Error>({
+    queryKey: ['unansweredPreassessment', child_id],
+    queryFn: () => getUnansweredPreassessment(child_id),
+    enabled: Boolean(child_id),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
   });
 }

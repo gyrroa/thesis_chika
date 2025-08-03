@@ -1,5 +1,5 @@
 //exercises/service.ts
-import type { AttemptV2Response, AttemptV2Variables, CustomAssessmentResponse, CustomAssessmentVariables, PracticeSoundVariables, PreAssessmentResponse, SoundPracticeResponse } from './types';
+import type { AttemptV2Response, AttemptV2Variables, CustomAssessmentResponse, CustomAssessmentVariables, PracticeSoundVariables, PreAssessmentResponse, SoundPracticeResponse, UnansweredPreassessmentResponse } from './types';
 import type { SoundMastery } from './types';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
@@ -149,4 +149,32 @@ export async function attemptV2(
     throw new Error(body.detail || res.statusText);
   }
   return body as AttemptV2Response;
+}
+
+/**
+ * GET unanswered pre-assessment for a child
+ */
+export async function getUnansweredPreassessment(
+  child_id: string
+): Promise<UnansweredPreassessmentResponse> {
+  const accessToken = localStorage.getItem('access_token') ?? '';
+  if (!accessToken) {
+    throw new Error('No access token — user must be logged in');
+  }
+
+  const res = await fetch(
+    `${API}/exercises/${child_id}/preassessment/unanswered`,
+    {
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  const body = await res.json();
+  if (!res.ok) {
+    throw new Error(body.detail || res.statusText);
+  }
+  return body as UnansweredPreassessmentResponse;
 }

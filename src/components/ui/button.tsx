@@ -14,6 +14,7 @@ const buttonVariants = cva(
         default: "cursor-pointer text-[#FFFDF2] bg-gradient-to-b from-[#F90] to-[#C45500] border border-[#F90] shadow-[0px_5px_0px_0px_#C45500] active:shadow-[0px_0px_0px_0px_#C45500] hover:brightness-110 active:brightness-100 active:translate-y-[5px] duration-100",
         custom: "cursor-pointer text-[#FF9900] bg-[#FFFDF2] border border-[#F90] shadow-[0px_5px_0px_0px_rgba(255,_153,_0,_0.35)] active:shadow-[0px_0px_0px_0px_rgba(255,_153,_0,_0.35)] hover:brightness-110 active:brightness-100 active:translate-y-[5px] duration-100",
         card: "rounded-[35px] text-[#FF9900] bg-[#FFFDF2] border-2 border-[#F90] shadow-[0px_10px_0px_0px_rgba(255,_153,_0,_0.35)] active:shadow-[0px_0px_0px_0px_rgba(255,_153,_0,_0.35)] hover:brightness-110 active:brightness-100 active:translate-y-[5px] duration-100",
+        preAssessment: "w-fit h-fit text-[14px] py-[6px] px-[20px] rounded-[50px] cursor-pointer text-[#FFFDF2] bg-gradient-to-b from-[#F90] to-[#C45500] border border-[#F90] shadow-[0px_5px_0px_0px_#C45500] active:shadow-[0px_0px_0px_0px_#C45500] hover:brightness-110 active:brightness-100 active:translate-y-[5px] duration-100",
       },
     },
     defaultVariants: {

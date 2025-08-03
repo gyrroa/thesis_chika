@@ -110,3 +110,12 @@ export interface AttemptV2Response {
   attempt_time: string;       // ISO timestamp
   audio_url: string;
 }
+
+export interface UnansweredPreassessmentResponse {
+  assessment_id: string;
+  child_age: number;
+  total_items: number;
+  answered_items: number;
+  is_complete: boolean;
+  unanswered_item_ids: number[];
+}

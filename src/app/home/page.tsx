@@ -10,13 +10,17 @@ import { useUserChildren } from '@/features/users/hooks';
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
 import { User } from '@/features/auth/types';
-import { useSoundMastery } from '@/features/exercises/hooks';
+import { useSoundMastery, useUnansweredPreassessment } from '@/features/exercises/hooks';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
     const router = useRouter();
     const qc = useQueryClient();
     const user = qc.getQueryData<User>(['auth', 'user']);
     const { data: children } = useUserChildren(user?.id ?? '');
+    const childId = children?.[0]?.id ?? '';
+    const { data } = useSoundMastery(childId);
+    const { data: preAssessment, isLoading, isError, error } = useUnansweredPreassessment(childId);
     // Scrollable
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -37,8 +41,6 @@ export default function Home() {
         };
     }, []);
 
-    const childId = children?.[0]?.id ?? '';
-    const { data } = useSoundMastery(childId);
     const FilledStar = () => (
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15" fill="none">
             <path
@@ -133,90 +135,112 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-                <div className='flex flex-col justify-between font-bold gap-[13px]'>
-                    <h1 className='text-[#C45500] text-[16px]'>{"SOUNDS TO PRACTICE"}</h1>
-                    {/* All Sounds */}
-                    <button
-                        onClick={() => router.push(`/articulation/general-assessment`)}
-                        className={'flex w-full items-start justify-start cursor-pointer active:scale-95 transition-all duration-200 border-2 border-[#F90] rounded-[30px] py-[25px] px-[30px] gap-[25px] bg-[#FFFDF2] shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)]'}>
-                        <div className="flex flex-col gap-2 items-center justify-center w-full">
-                            <div className="flex flex-col text-[#C45500] w-full whitespace-nowrap text-center items-center">
-                                <h1 className="text-[16px] font-bold leading-tight">{"ALL SOUNDS"}</h1>
-                                <div className='flex gap-[5px]'>
-                                    <p className="text-[12px] font-medium leading-tight">{"Mastery: "}</p>
-                                    {Array.from({ length: 5 }, (_, i) =>
-                                        i < starCount ? <FilledStar key={i} /> : <OutlineStar key={i} />
-                                    )}
+
+                {preAssessment?.is_complete &&
+                    <div className='flex flex-col justify-between font-bold gap-[13px]'>
+                        <h1 className='text-[#C45500] text-[16px]'>{"SOUNDS TO PRACTICE"}</h1>
+                        {/* All Sounds */}
+                        <button
+                            onClick={() => router.push(`/articulation/general-assessment`)}
+                            className={'flex w-full items-start justify-start cursor-pointer active:scale-95 transition-all duration-200 border-2 border-[#F90] rounded-[30px] py-[25px] px-[30px] gap-[25px] bg-[#FFFDF2] shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)]'}>
+                            <div className="flex flex-col gap-2 items-center justify-center w-full">
+                                <div className="flex flex-col text-[#C45500] w-full whitespace-nowrap text-center items-center">
+                                    <h1 className="text-[16px] font-bold leading-tight">{"ALL SOUNDS"}</h1>
+                                    <div className='flex gap-[5px]'>
+                                        <p className="text-[12px] font-medium leading-tight">{"Mastery: "}</p>
+                                        {Array.from({ length: 5 }, (_, i) =>
+                                            i < starCount ? <FilledStar key={i} /> : <OutlineStar key={i} />
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </button>
-                    <svg
-                        className="w-full h-[1px]"
-                        viewBox="0 0 306 1"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        preserveAspectRatio="none"
-                    >
-                        <line
-                            x1="0"
-                            y1="0.5"
-                            x2="306"
-                            y2="0.5"
-                            stroke="#FF9900"
-                            strokeLinecap="round"
-                            strokeDasharray="6 6"
-                        />
-                    </svg>
-                    {/* Sound Cards */}
-                    {filteredSortedSounds.map(m => (
-                        <SoundCardPractice
-                            key={m.sound}
-                            alt="sound icon"
-                            sound={m.sound}
-                            int={m.reviewed_words}
-                            max={m.total_words}
-                            mastery={m.mastery_score}
-                            onPractice={() =>
-                                router.push(`/articulation/assessment?sound=${m.sound}`)
-                            }
-                        />
-                    ))}
-                </div>
-                {/* Sounds i can say*/}
-                <div className="flex flex-col gap-[13px] relative">
-                    {!isCanSayEmpty &&
-                        <h1 className="text-[#C45500] text-[16px] font-bold">{"SOUNDS I CAN SAY"}</h1>
-                    }
-
-                    {/* Wrapper to contain scroll area + gradient overlays */}
-                    <div className="relative">
-                        {/* Left fade overlay */}
-                        <div className="pointer-events-none absolute left-0 top-0 h-full w-3 bg-gradient-to-r from-[#FFFDF2] to-transparent z-10" />
-
-                        {/* Right fade overlay */}
-                        <div className="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-[#FFFDF2] to-transparent z-10" />
-
-                        {/* Scrollable container */}
-                        <div
-                            ref={scrollRef}
-                            className="flex-nowrap flex gap-3 overflow-x-auto scroll-smooth snap-x snap-mandatory p-2 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
+                        </button>
+                        <svg
+                            className="w-full h-[1px]"
+                            viewBox="0 0 306 1"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            preserveAspectRatio="none"
                         >
-                            {filteredSortedSoundsCanSay.map(m => (
-                                <SoundCardSayButton
-                                    key={m.sound}
-                                    alt="sound icon"
-                                    sound={m.sound}
-                                    onPractice={() =>
-                                        router.push(`/articulation/assessment?sound=${m.sound}`)
-                                    }
-                                />
-                            ))}
+                            <line
+                                x1="0"
+                                y1="0.5"
+                                x2="306"
+                                y2="0.5"
+                                stroke="#FF9900"
+                                strokeLinecap="round"
+                                strokeDasharray="6 6"
+                            />
+                        </svg>
+                        {/* Sound Cards */}
+                        {filteredSortedSounds.map(m => (
+                            <SoundCardPractice
+                                key={m.sound}
+                                alt="sound icon"
+                                sound={m.sound}
+                                int={m.reviewed_words}
+                                max={m.total_words}
+                                mastery={m.mastery_score}
+                                onPractice={() =>
+                                    router.push(`/articulation/assessment?sound=${m.sound}`)
+                                }
+                            />
+                        ))}
+                    </div>
+                }
+                {/* Sounds i can say*/}
+                {preAssessment?.is_complete &&
+                    <div className="flex flex-col gap-[13px] relative">
+                        {!isCanSayEmpty &&
+                            <h1 className="text-[#C45500] text-[16px] font-bold">{"SOUNDS I CAN SAY"}</h1>
+                        }
+
+                        {/* Wrapper to contain scroll area + gradient overlays */}
+                        <div className="relative">
+                            {/* Left fade overlay */}
+                            <div className="pointer-events-none absolute left-0 top-0 h-full w-3 bg-gradient-to-r from-[#FFFDF2] to-transparent z-10" />
+
+                            {/* Right fade overlay */}
+                            <div className="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-[#FFFDF2] to-transparent z-10" />
+
+                            {/* Scrollable container */}
+                            <div
+                                ref={scrollRef}
+                                className="flex-nowrap flex gap-3 overflow-x-auto scroll-smooth snap-x snap-mandatory p-2 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
+                            >
+                                {filteredSortedSoundsCanSay.map(m => (
+                                    <SoundCardSayButton
+                                        key={m.sound}
+                                        alt="sound icon"
+                                        sound={m.sound}
+                                        onPractice={() =>
+                                            router.push(`/articulation/assessment?sound=${m.sound}`)
+                                        }
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
+                {!preAssessment?.is_complete &&
+                    <div
+                        className={[
+                            'flex flex-col w-full items-center justify-center cursor-pointer border-2 border-[#F90] rounded-[30px] py-[25px] px-[30px] gap-[8px] bg-[#FFFDF2] shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)]'
+                        ].join(' ')}
+
+
+                    >
+                        <div className='flex flex-col items-center text-center'>
+                            <h1 className="text-[#C45500] text-[16px] font-bold leading-tight uppercase">{"ARTICULATION TEST"}</h1>
+                            <h1 className="text-[#C45500] text-[12px] font-medium leading-tight">{"Let’s see which sounds you need to"}<br />{"practice!"}</h1>
+                        </div>
+                        <Button
+                            variant={"preAssessment"}
+                            onClick={() => router.push("/articulation/pre-assessment")}>{"START TEST"}</Button>
+                    </div>
+                }
             </div>
             <FooterNav />
-        </main>
+        </main >
     );
 }

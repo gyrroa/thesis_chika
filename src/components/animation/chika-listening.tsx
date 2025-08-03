@@ -25,9 +25,9 @@ export default function ChikaListening() {
                     priority
                 />
                 {/* Text */}
-                <div className='w-full text-center flex flex-col gap-[10px]'>
-                    <h1 className='text-[#C45500] text-[32px] font-bold [text-shadow:0_0_4px_rgba(255,153,0,0.35)]'>Hold on</h1>
-                    <p className='text-[#FF9900] text-[20px] font-medium'>CHIKA’s listening closely…</p>
+                <div className='w-full text-center flex flex-col gap-[10px] -mt-[20px]'>
+                    <h1 className='text-[#C45500] text-[32px] font-bold [text-shadow:0_0_4px_rgba(255,153,0,0.35)]'>{"Hold on"}</h1>
+                    <p className='text-[#FF9900] text-[20px] font-medium'>{"CHIKA’s listening closely…"}</p>
                 </div>
             </div>
         </div>

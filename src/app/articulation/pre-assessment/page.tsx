@@ -32,7 +32,7 @@ export default function PreAssessment() {
     const { data: preAssessment, isLoading } = usePreAssessment();
 
     // pick the first item (or nothing)
-    const [idx, setIdx] = useState(0);
+    const [idx, setIdx] = useState(7);
     const item = preAssessment?.items?.[idx];
     const imgSrc = item?.word.image_url ?? '';
     const audioSrc = item?.word.audio_url ?? '';
@@ -126,7 +126,11 @@ export default function PreAssessment() {
     const handleResult = (resp: AttemptV2Response) => {
         setAttemptedWord(resp?.attempt_answer);
         if (resp?.correct && resp?.stress_correct) {
-            setCorrect(true);
+            if (idx + 1 < max) {
+                setCorrect(true);
+            } else {
+                setFinished(true);
+            }
         }
         else if (resp?.correct && !resp?.stress_correct) {
             setAttemptedStressedWord(resp?.attempt_answer_stressed);
@@ -317,9 +321,9 @@ export default function PreAssessment() {
                             <Image
                                 src={imgSrc}
                                 alt={word}
-                                width={127}
+                                width={132}
                                 height={132}
-                                className="m-auto w-[127px] h-[132px] filter drop-shadow-[0px_0px_16px_rgba(196,85,0,0.35)]"
+                                className="m-auto w-[132px] h-[132px] filter drop-shadow-[0px_0px_16px_rgba(196,85,0,0.35)]"
                                 priority
                                 loading='eager'
                             />

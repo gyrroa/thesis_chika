@@ -27,7 +27,8 @@ export default function Edit() {
     const { mutate: updateUser } = useUpdateUser();
     const { mutate: updateChild } = useUpdateChild();
 
-    const [name, setName] = useState(user?.name || '');
+    const [name] = useState(user?.name || '');
+    const [nickname, setNickName] = useState(children?.[0]?.nickname || '');
     const [email, setEmail] = useState(user?.email || '');
     const [age, setAge] = useState(children?.[0]?.age || 6);
     const [gender, setGender] = useState(children?.[0]?.gender?.toUpperCase() || 'MALE');
@@ -60,7 +61,7 @@ export default function Edit() {
                         {
                             child_id: children[0].id,
                             data: {
-                                nickname: name,
+                                nickname: nickname,
                                 age,
                                 gender,
                             },
@@ -69,7 +70,7 @@ export default function Edit() {
                             onSuccess: () => {
                                 const updatedChild = {
                                     ...children[0],
-                                    nickname: name,
+                                    nickname: nickname,
                                     age,
                                     gender,
                                 };
@@ -348,8 +349,8 @@ export default function Edit() {
                                 <input
                                     type="text"
                                     name="name"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    value={nickname}
+                                    onChange={(e) => setNickName(e.target.value)}
                                     required
                                     className="h-11 w-full border border-[#F90] placeholder-[rgba(255,153,0,0.5)] pl-[51] pr-[5px] py-2 rounded-[25px] text-[#F90]"
                                     placeholder={"Your Child's Nickname"}

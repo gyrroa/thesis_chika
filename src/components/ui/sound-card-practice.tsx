@@ -102,7 +102,6 @@ export const SoundCardPractice: React.FC<PracticeCardProps> = ({
                 className="my-auto"
                 priority
             />
-
             <div className="inline-flex flex-col gap-2 items-start justify-start w-auto">
                 <div className="text-[#C45500]">
                     <h1 className="text-[16px] font-bold leading-tight uppercase">{"THE "}<span className='text-[#F90]'>{"/"}{sound}{"/"}</span>{" SOUND"}</h1>

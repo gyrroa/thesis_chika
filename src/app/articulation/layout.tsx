@@ -5,12 +5,17 @@ import { AttemptV2Provider } from '@/features/exercises/context/AttemptSubmitCon
 import { CustomAssessmentProvider } from '@/features/exercises/context/CustomAssessmentContext';
 import { PracticeSoundProvider } from '@/features/exercises/context/PracticeSoundContext';
 import { PreAssessmentProvider } from '@/features/exercises/context/PreAssessmentContext';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 
 interface LayoutProps {
     children: ReactNode;
 }
-
+useEffect(() => {
+    for (let i = 1; i <= 8; i++) {
+        const img = new Image();
+        img.src = `/animation/listening/Order=${i}.png`;
+    }
+}, []);
 export default function AttemptV2Layout({ children }: LayoutProps) {
     return <PreAssessmentProvider>
         <PracticeSoundProvider>

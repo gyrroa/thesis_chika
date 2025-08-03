@@ -1,6 +1,6 @@
 export default function ProgressBar({
   value,
-  max = 10, 
+  max = 10,
 }: {
   value: number;
   max?: number;
@@ -16,7 +16,7 @@ export default function ProgressBar({
         style={{ width: `${percentage}%` }}
       >
         {/* Number bubble */}
-        <div className="flex w-[16px] h-[16px] bg-[#FFFDF2] rounded-full text-[#C45500] text-[10px] font-bold items-center justify-center leading-none">
+        <div className="flex w-[16px] h-[16px] bg-[#FFFDF2] rounded-full text-[#C45500] text-[10px] font-bold items-center justify-center tabular-nums leading-none">
           {clampedValue}
         </div>
       </div>

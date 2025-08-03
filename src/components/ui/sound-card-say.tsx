@@ -49,7 +49,7 @@ export function SoundCardSayButton({
     return (
         <Button
             variant="card"
-            className="flex flex-col py-[20px] h-fit w-fit gap-[5px]"
+            className="flex flex-col py-[20px] h-fit w-fit gap-[5px] cursor-pointer"
             onClick={onPractice}
         >
             <Image

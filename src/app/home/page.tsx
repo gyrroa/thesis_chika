@@ -39,10 +39,6 @@ export default function Home() {
 
     const childId = children?.[0]?.id ?? '';
     const { data } = useSoundMastery(childId);
-    const averageMastery =
-        data && data.length > 0
-            ? data.reduce((sum, m) => sum + m.mastery_score, 0) / data.length
-            : 0;
     const FilledStar = () => (
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15" fill="none">
             <path
@@ -71,6 +67,14 @@ export default function Home() {
             </defs>
         </svg>
     );
+
+    const averageMastery =
+        data && data.length > 0
+            ? data
+                .filter(m => m.mastery_score < 80)
+                .reduce((sum, m) => sum + m.mastery_score, 0) /
+            data.filter(m => m.mastery_score < 80).length
+            : 0;
     // 1) parse into a percentage 0–100
     const pct = Math.max(0, Math.min(100, isNaN(averageMastery) ? 0 : averageMastery));
 

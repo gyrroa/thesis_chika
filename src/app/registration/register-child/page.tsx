@@ -70,7 +70,8 @@ export default function RegisterChild() {
                 setLoading(false);
             },
             onSettled: () => {
-                setLoading(false);
+
+                handleRoute('/articulation/how');
             },
         });
     };

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import { Button } from './button';
 import Image from 'next/image';
 
@@ -13,6 +13,16 @@ export function ErrorDialogBox({
   onClose,
   errorMessage,
 }: DialogBoxProps) {
+  const displayMessage: ReactNode = useMemo(() => {
+    if (typeof errorMessage === 'string') {
+      return errorMessage.endsWith('.')
+        ? errorMessage
+        : errorMessage + '.';
+    }
+    // if it’s already a ReactNode (e.g. you passed <span>…), just render it as-is
+    return errorMessage;
+  }, [errorMessage]);
+
   return (
     <div
       className="absolute inset-0 flex bg-[black]/50 w-dvw h-dvh z-20 text-center select-none"
@@ -38,7 +48,7 @@ export function ErrorDialogBox({
               {"Error"}
             </h1>
             <p>
-              {errorMessage}{"."}
+              {displayMessage}
             </p>
           </div>
         </div>

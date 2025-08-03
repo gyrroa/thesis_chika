@@ -42,6 +42,7 @@ export function usePracticeSound(child_id: string) {
 export function useCustomAssessment(child_id: string) {
   return useMutation<CustomAssessmentResponse, Error, CustomAssessmentVariables>({
     mutationFn: (vars) => createCustomAssessment(child_id, vars),
+    // you can also add onSuccess, onError, etc. here
   })
 }
 /**

@@ -7,9 +7,19 @@ const API = process.env.NEXT_PUBLIC_API_URL;
 export async function getPreAssessmentItems(
   child_id: string
 ): Promise<PreAssessmentResponse> {
+  const accessToken = localStorage.getItem('access_token') ?? '';
+  if (!accessToken) {
+    throw new Error('No access token — user must be logged in');
+  }
   const res = await fetch(
     `${API}/exercises/pre-assessment/${child_id}/items`,
-    { headers: { 'Content-Type': 'application/json' } }
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    }
   );
   const body = await res.json();
   if (!res.ok) {
@@ -37,6 +47,10 @@ export async function createSoundPractice(
   child_id: string,
   { sound, nickname, max_items = 10 }: PracticeSoundVariables
 ): Promise<SoundPracticeResponse> {
+  const accessToken = localStorage.getItem('access_token') ?? '';
+  if (!accessToken) {
+    throw new Error('No access token — user must be logged in');
+  }
   const params = new URLSearchParams();
   params.append('sound', sound);
   if (nickname) params.append('nickname', nickname);
@@ -46,7 +60,11 @@ export async function createSoundPractice(
     `${API}/exercises/children/${child_id}/practice-sound?${params.toString()}`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
     }
   );
   const body = await res.json();
@@ -62,6 +80,10 @@ export async function createCustomAssessment(
   child_id: string,
   { difficultry_threshold, max_items, nickname }: CustomAssessmentVariables
 ): Promise<CustomAssessmentResponse> {
+  const accessToken = localStorage.getItem('access_token') ?? '';
+  if (!accessToken) {
+    throw new Error('No access token — user must be logged in');
+  }
   const params = new URLSearchParams();
   if (difficultry_threshold != null) {
     params.append('difficultry_threshold', difficultry_threshold.toString());
@@ -77,7 +99,11 @@ export async function createCustomAssessment(
     `${API}/exercises/children/${child_id}/custom-assessment?${params.toString()}`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
     }
   );
 
@@ -104,8 +130,17 @@ export async function attemptV2(
   const form = new FormData();
   form.append('file', file);
 
-  const res = await fetch(`${API}/exercises/attempt_v2?${params}`, {
+  const accessToken = localStorage.getItem('access_token') ?? '';
+  if (!accessToken) {
+    throw new Error('No access token—user must be logged in');
+  }
+
+  const res = await fetch(`${API}/exercises/attempt_v3?${params}`, {
     method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    },
     body: form,
   });
 

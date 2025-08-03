@@ -1,11 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import Image from 'next/image';
 
 export interface PracticeCardProps {
-    /** Image source URL (next/image) */
-    src: string;
     /** Alt text for the image */
     alt?: string;
     /** Title text above the progress line */
@@ -20,7 +18,6 @@ export interface PracticeCardProps {
 }
 
 export const SoundCardPractice: React.FC<PracticeCardProps> = ({
-    src,
     alt = '',
     sound,
     int,
@@ -61,18 +58,47 @@ export const SoundCardPractice: React.FC<PracticeCardProps> = ({
 
     // 2) convert each 20% into one star (ceil so 1–20 → 1 star, …, 81–100 → 5 stars)
     const starCount = Math.min(5, Math.ceil(pct / 20));
+
+    // Image URL mapping 
+    const soundToFilename: Record<string, string> = {
+        "b": 'BAboy',
+        "d": "dokTOR",
+        'dy': 'dYAket',
+        'g': 'giTAra',
+        'h': 'HIto',
+        'k': 'kaBAyo',
+        'l': 'laMOK',
+        'm': 'maNOK',
+        'n': 'niYOG',
+        'ng': 'NGIpin',
+        'p': 'parupaRO',
+        'r': 'reGAlo',
+        's': 'SAging',
+        'sy': 'siyuDAD',
+        't': 'TIGre',
+        'ts': 'tsokoLAte',
+        'w': 'waLIS',
+        'y': 'YElo'
+    };
+    const imgFilename = useMemo(() => {
+        return soundToFilename[sound] ?? sound;
+    }, [sound]);
+
+    const imgSrc = `https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/images/${imgFilename}.png`;
+
+
     return (
         <div
             className={[
-                'flex w-full items-center justify-center cursor-pointer border-2 border-[#F90] rounded-[30px] py-[25px] px-[30px] gap-[25px] bg-[#FFFDF2] shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)] active:scale-95 transition-all duration-200'
+                'flex w-full items-center justify-center cursor-pointer border-2 border-[#F90] rounded-[30px] py-[25px] px-[30px] gap-[15px] bg-[#FFFDF2] shadow-[0px_0px_16px_0px_rgba(255,153,0,0.35)] active:scale-95 transition-all duration-200'
             ].join(' ')}
             onClick={onPractice}
         >
             <Image
-                src={src}
+                src={imgSrc}
                 alt={alt}
-                width={40}
-                height={50}
+                width={60}
+                height={60}
                 className="my-auto"
                 priority
             />

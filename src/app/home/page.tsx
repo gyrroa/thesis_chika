@@ -167,7 +167,6 @@ export default function Home() {
                     {filteredSortedSounds.map(m => (
                         <SoundCardPractice
                             key={m.sound}
-                            src="/TEMP.svg"
                             alt="sound icon"
                             sound={m.sound}
                             int={m.reviewed_words}
@@ -199,9 +198,8 @@ export default function Home() {
                             {filteredSortedSoundsCanSay.map(m => (
                                 <SoundCardSayButton
                                     key={m.sound}
-                                    src="/TEMP.svg"
                                     alt="sound icon"
-                                    label1={m.sound}
+                                    sound={m.sound}
                                     onPractice={() =>
                                         router.push(`/articulation/assessment?sound=${m.sound}`)
                                     }

@@ -237,36 +237,54 @@ export default function GeneralAssessment() {
 
     // SFX
     const playSoundFX = (src: string) => {
-        const audio = new Audio(src);
-        audio.play().catch((err) => {
-            console.error('Audio playback failed:', err);
-        });
+        const audio = new Audio();
+
+        // try OGG first
+        if (audio.canPlayType('audio/ogg; codecs="vorbis"')) {
+            audio.src = `${src}.ogg`;
+        }
+        // then MP3
+        else if (audio.canPlayType('audio/mpeg')) {
+            audio.src = `${src}.mp3`;
+        }
+
+        audio
+            .play()
+            .catch((err) => {
+                console.error('Audio playback failed:', err);
+            });
     };
 
     useEffect(() => {
         if (isPending) {
-            playSoundFX("/sfx/HOLD ON.ogg");
+            playSoundFX("/sfx/HOLD ON");
         }
     }, [isPending]);
 
-
     useEffect(() => {
         if (correct) {
-            playSoundFX("/sfx/GREAT JOB.ogg");
+            playSoundFX("/sfx/GREAT JOB");
         }
     }, [correct]);
 
     useEffect(() => {
+        if (incorrectStress) {
+            playSoundFX("/sfx/ALMOST THERE");
+        }
+    }, [incorrectStress]);
+
+    useEffect(() => {
         if (incorrect) {
-            playSoundFX("/sfx/ERROR.ogg");
+            playSoundFX("/sfx/OOPS");
         }
     }, [incorrect]);
 
+    
     useEffect(() => {
-        if (incorrectStress) {
-            playSoundFX("/sfx/ALMOST THERE.ogg");
+        if (incorrect) {
+            playSoundFX("/sfx/YAY");
         }
-    }, [incorrectStress]);
+    }, [finished]);
 
     return (
         <main className="flex flex-col items-center justify-center min-h-dvh bg-[url('/background.svg')] bg-cover bg-no-repeat gap-[8px]">

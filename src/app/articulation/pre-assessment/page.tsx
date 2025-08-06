@@ -152,8 +152,21 @@ export default function PreAssessment() {
 
     const [errorMic, setErrorMic] = useState(false);
     // mic handler
+    const [unlocked, setUnlocked] = useState(false);
     const handleMic = async () => {
         await wavReady.current;
+        if (!unlocked) {
+            Object.values(sfx.current).forEach(a => {
+                a
+                    .play()           // user‐gesture unlock
+                    .then(() => {
+                        a.pause();
+                        a.currentTime = 0;
+                    })
+                    .catch(() => {/* swallow */ });
+            });
+            setUnlocked(true);
+        }
         setErrorMic(false);
         if (!isRecording) {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -225,43 +238,43 @@ export default function PreAssessment() {
     const [backModal, setBackModal] = useState(false);
 
     // SFX
-    const playSoundFX = (src: string) => {
-        const audio = new Audio(src);
-        audio.play().catch((err) => {
-            console.error('Audio playback failed:', err);
+    const sfx = useRef<Record<string, HTMLAudioElement>>({});
+    useEffect(() => {
+        const files = [
+            "/sfx/HOLD ON.ogg",
+            "/sfx/GREAT JOB.ogg",
+            "/sfx/ALMOST THERE.ogg",
+            "/sfx/OOPS.ogg",
+            "/sfx/YAY.ogg",
+        ];
+        files.forEach(path => {
+            sfx.current[path] = new Audio(encodeURI(path));
+        });
+    }, []);
+
+    const playSoundFX = (path: string) => {
+        const a = sfx.current[path];
+        if (!a) return;
+        a.currentTime = 0;
+        a.play().catch(() => {
+            console.error("SFX failed:", path);
         });
     };
 
     useEffect(() => {
-        if (isPending) {
-            playSoundFX("/sfx/HOLD ON.ogg");
-        }
+        if (isPending) playSoundFX("/sfx/HOLD ON.ogg");
     }, [isPending]);
-
     useEffect(() => {
-        if (correct) {
-            playSoundFX("https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/sfx/GREAT%20JOB.mp3");
-        }
+        if (correct) playSoundFX("/sfx/GREAT JOB.ogg");
     }, [correct]);
-
     useEffect(() => {
-        if (incorrectStress) {
-            playSoundFX("https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/sfx/ALMOST%20THERE.mp3");
-        }
+        if (incorrectStress) playSoundFX("/sfx/ALMOST THERE.ogg");
     }, [incorrectStress]);
-
-
     useEffect(() => {
-        if (incorrect) {
-            playSoundFX("https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/sfx/OOPS.mp3");
-        }
+        if (incorrect) playSoundFX("/sfx/OOPS.ogg");
     }, [incorrect]);
-
-
     useEffect(() => {
-        if (incorrect) {
-            playSoundFX("https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/sfx/YAY.mp3");
-        }
+        if (finished) playSoundFX("/sfx/YAY.ogg");
     }, [finished]);
 
     return (

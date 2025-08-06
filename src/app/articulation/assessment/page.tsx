@@ -27,7 +27,7 @@ export default function Assessment() {
     const user = qc.getQueryData<User>(['auth', 'user']);
     const { data: children } = useUserChildren(user?.id ?? '');
     const childId = children?.[0]?.id ?? '';
-    // —— 1) get your pre-assessment state from context
+    // get your pre-assessment state from context
     // modals
     const [correct, setCorrect] = useState(false);
     const [incorrect, setIncorrect] = useState(false);
@@ -55,7 +55,7 @@ export default function Assessment() {
         }
     }, [mutate, sound, max, isLoading, assessment]);
 
-    // —— 2) pick the first item (or nothing)
+    // pick the first item (or nothing)
     const [idx, setIdx] = useState(0);
     const item = assessment?.items?.[idx];
     const imgSrc = item?.word.image_url ?? 'logo.svg';
@@ -67,13 +67,13 @@ export default function Assessment() {
     const transl = item?.word.translation ?? '';
     const [attemptedWord, setAttemptedWord] = useState<string>("");
     const [attemptedStressedWord, setAttemptedStressedWord] = useState<string>("");
-    // —— 3) recorder refs & state
+    // recorder refs & state
     const [isRecording, setIsRecording] = useState(false);
     const [isPulsing, setIsPulsing] = useState(false);
     const mediaRef = useRef<IMediaRecorder | null>(null);
     const chunks = useRef<Blob[]>([]);
 
-    // —— 4) prepare WAV once
+    // prepare WAV once
     const wavReady = useRef<Promise<void>>(Promise.resolve());
     useEffect(() => {
         wavReady.current = (async () => {
@@ -90,7 +90,7 @@ export default function Assessment() {
         })();
     }, []);
 
-    // —— 5) VAD hook
+    // VAD hook
     const endRecording = useCallback(() => {
         mediaRef.current?.stop();
         setIsRecording(false);
@@ -166,11 +166,23 @@ export default function Assessment() {
         // isError,
         // error,
     } = useSubmitAttempt();
-    // —— 6) mic handler
-    const [errorMic, setErrorMic] = useState(false);
     // mic handler
+    const [errorMic, setErrorMic] = useState(false);
+    const [unlocked, setUnlocked] = useState(false);
     const handleMic = async () => {
         await wavReady.current;
+        if (!unlocked) {
+            Object.values(sfx.current).forEach(a => {
+                a
+                    .play()           // user‐gesture unlock
+                    .then(() => {
+                        a.pause();
+                        a.currentTime = 0;
+                    })
+                    .catch(() => {/* swallow */ });
+            });
+            setUnlocked(true);
+        }
         setErrorMic(false);
         if (!isRecording) {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -228,7 +240,7 @@ export default function Assessment() {
         }
     };
 
-    // —— 7) tooltip behavior
+    // tooltip behavior
     const [showTooltip, setShowTooltip] = useState(false);
     useEffect(() => {
         if (!showTooltip) return;
@@ -236,49 +248,49 @@ export default function Assessment() {
         return () => clearTimeout(t);
     }, [showTooltip]);
 
-    // —— 8) dynamic font sizing
+    // dynamic font sizing
     const fontSize = `${Math.max(20, 32 - (word.length - 4) * 1.5)}px`;
 
     const [backModal, setBackModal] = useState(false);
 
     // SFX
-    const playSoundFX = (src: string) => {
-        const audio = new Audio(src);
-        audio.play().catch((err) => {
-            console.error('Audio playback failed:', err);
+    const sfx = useRef<Record<string, HTMLAudioElement>>({});
+    useEffect(() => {
+        const files = [
+            "/sfx/HOLD ON.ogg",
+            "/sfx/GREAT JOB.ogg",
+            "/sfx/ALMOST THERE.ogg",
+            "/sfx/OOPS.ogg",
+            "/sfx/YAY.ogg",
+        ];
+        files.forEach(path => {
+            sfx.current[path] = new Audio(encodeURI(path));
+        });
+    }, []);
+
+    const playSoundFX = (path: string) => {
+        const a = sfx.current[path];
+        if (!a) return;
+        a.currentTime = 0;
+        a.play().catch(() => {
+            console.error("SFX failed:", path);
         });
     };
 
     useEffect(() => {
-        if (isPending) {
-            playSoundFX("/sfx/HOLD ON.ogg");
-        }
+        if (isPending) playSoundFX("/sfx/HOLD ON.ogg");
     }, [isPending]);
-
     useEffect(() => {
-        if (correct) {
-            playSoundFX("https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/sfx/GREAT%20JOB.mp3");
-        }
+        if (correct) playSoundFX("/sfx/GREAT JOB.ogg");
     }, [correct]);
-
     useEffect(() => {
-        if (incorrectStress) {
-            playSoundFX("https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/sfx/ALMOST%20THERE.mp3");
-        }
+        if (incorrectStress) playSoundFX("/sfx/ALMOST THERE.ogg");
     }, [incorrectStress]);
-
-
     useEffect(() => {
-        if (incorrect) {
-            playSoundFX("https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/sfx/OOPS.mp3");
-        }
+        if (incorrect) playSoundFX("/sfx/OOPS.ogg");
     }, [incorrect]);
-
-
     useEffect(() => {
-        if (incorrect) {
-            playSoundFX("https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/sfx/YAY.mp3");
-        }
+        if (finished) playSoundFX("/sfx/YAY.ogg");
     }, [finished]);
 
     return (

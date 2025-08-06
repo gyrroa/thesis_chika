@@ -167,15 +167,18 @@ export default function GeneralAssessment() {
     const handleMic = async () => {
         await wavReady.current;
         if (!unlocked) {
-            Object.values(sfx.current).forEach(a => {
-                a
-                    .play()           // user‐gesture unlock
+            // pick just one clip to unlock (e.g. HOLD ON)
+            const a = sfx.current["/sfx/HOLD ON.ogg"];
+            if (a) {
+                a.volume = 0;                    // mute it
+                a.play()                         // user-gesture unlock
                     .then(() => {
                         a.pause();
                         a.currentTime = 0;
+                        a.volume = 1;                 // restore volume
                     })
                     .catch(() => {/* swallow */ });
-            });
+            }
             setUnlocked(true);
         }
         setErrorMic(false);

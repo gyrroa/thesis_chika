@@ -243,52 +243,41 @@ export default function Assessment() {
 
     // SFX
     const playSoundFX = (src: string) => {
-        const audio = new Audio();
-
-        // try OGG first
-        if (audio.canPlayType('audio/ogg; codecs="vorbis"')) {
-            audio.src = `${src}.ogg`;
-        }
-        // then MP3
-        else if (audio.canPlayType('audio/mpeg')) {
-            audio.src = `${src}.mp3`;
-        }
-
-        audio
-            .play()
-            .catch((err) => {
-                console.error('Audio playback failed:', err);
-            });
+        const audio = new Audio(src);
+        audio.play().catch((err) => {
+            console.error('Audio playback failed:', err);
+        });
     };
 
     useEffect(() => {
         if (isPending) {
-            playSoundFX("/sfx/HOLD ON");
+            playSoundFX("/sfx/HOLD ON.ogg");
         }
     }, [isPending]);
 
     useEffect(() => {
         if (correct) {
-            playSoundFX("/sfx/GREAT JOB");
+            playSoundFX("https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/sfx/GREAT%20JOB.mp3");
         }
     }, [correct]);
 
     useEffect(() => {
         if (incorrectStress) {
-            playSoundFX("/sfx/ALMOST THERE");
+            playSoundFX("https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/sfx/ALMOST%20THERE.mp3");
         }
     }, [incorrectStress]);
 
+
     useEffect(() => {
         if (incorrect) {
-            playSoundFX("/sfx/OOPS");
+            playSoundFX("https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/sfx/OOPS.mp3");
         }
     }, [incorrect]);
 
 
     useEffect(() => {
         if (incorrect) {
-            playSoundFX("/sfx/YAY");
+            playSoundFX("https://kjebfsttsciscbasipqs.supabase.co/storage/v1/object/public/chika-assets/sfx/YAY.mp3");
         }
     }, [finished]);
 

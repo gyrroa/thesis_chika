@@ -10,7 +10,7 @@ import { useVad } from '@/lib/customVad';
 import { MediaRecorder as EMR, IMediaRecorder, register } from 'extendable-media-recorder';
 import { connect as wavConnect } from 'extendable-media-recorder-wav-encoder';
 import { usePreAssessment } from '@/features/exercises/context/PreAssessmentContext';
-import { useSubmitAttempt } from '@/features/exercises/hooks';
+import { useSubmitAttempt, useUnansweredPreassessment } from '@/features/exercises/hooks';
 import ChikaListening from '@/components/animation/chika-listening';
 import { useQueryClient } from '@tanstack/react-query';
 import { User } from '@/features/auth/types';
@@ -32,7 +32,17 @@ export default function PreAssessment() {
     const { data: preAssessment, isLoading } = usePreAssessment();
 
     // pick the first item (or nothing)
-    const [idx, setIdx] = useState(0);
+    const { data: preAssessmentItems } = useUnansweredPreassessment(childId);
+    const answered = preAssessmentItems?.answered_items ?? 0;
+
+    // initialize idx to however many are already answered
+    const [idx, setIdx] = useState(() => answered);
+
+    // whenever answered_items changes, update idx
+    useEffect(() => {
+        setIdx(answered);
+    }, [answered]);
+    // recorder refs & state
     const item = preAssessment?.items?.[idx];
     const imgSrc = item?.word.image_url ?? '';
     const audioSrc = item?.word.audio_url ?? '';

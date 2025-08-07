@@ -20,7 +20,7 @@ export default function Home() {
     const { data: children } = useUserChildren(user?.id ?? '');
     const childId = children?.[0]?.id ?? '';
     const { data } = useSoundMastery(childId);
-    const { data: preAssessment, isLoading, isError, error } = useUnansweredPreassessment(childId);
+    const { data: preAssessment } = useUnansweredPreassessment(childId);
     // Scrollable
     const scrollRef = useRef<HTMLDivElement>(null);
 
